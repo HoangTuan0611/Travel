@@ -1,0 +1,126 @@
+<link rel="stylesheet" href="/public/css/footer.css">
+<footer class="footer custom-footer">
+    <div class="container container-border">
+        <div class="row row-padding-bottom">
+            <div class="col-md-4">
+                <div class="form-group col-md-12">
+                    <span class="footer-info">Về chúng tôi</span>
+                </div>
+                <div class="form-group col-md-12">
+                    <span class="footer-info">Liên hệ</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group col-md-12">
+                    <span class="footer-info">Điều khoản sử dụng</span>
+                </div>
+                <div class="form-group col-md-12">
+                    <span class="footer-info">Thỏa thuận người dùng</span>
+                </div>
+            </div>
+            <div class="col-md-4 hidden-xs">
+                <div class="form-group col-md-12">
+                    <span class="footer-info">Câu chuyện Explore</span>
+                </div>
+                <div class="form-group col-md-12">
+                    <span class="footer-info">Hoạt động</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row row-padding" style="text-align: center;">
+        <div class="facebook col-6 col-md-6">
+            <a style="color: #000;" href="https://www.facebook.com/profile.php?id=100006647792868">
+                <i class="link fa fa-facebook" aria-hidden="true"></i>
+            </a>
+        </div>
+        <div class="insta col-6 col-md-6">
+            <a style="color: #000;" href="https://www.instagram.com/htuan____/">
+                <i class="link fa fa-instagram" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+    <div class="row row-padding" style="text-align: center;">
+        <div class="col-md-12">
+            <span>© Copyright 2020 | Designed by: <a href="https://www.facebook.com/profile.php?id=100006647792868">NHT</a></span>
+        </div>
+    </div>
+</footer>
+
+
+<!-- <script>
+    window.user = null;
+    var socketIO = io("http://localhost:3000");
+    function getUser(){
+        if(localStorage.getItem("acceccToken")){
+            var ajax= new XMLHttpRequest();
+            ajax.open("POST", "/getUser");
+
+            ajax.onreadystatechange = function(){
+                if(this.readyState == 4 && this.status ==200){
+                    var reponse = JSON.parse(this.responseText);
+
+                    if(reponse.status =="success"){
+                        window.user = reponse.data;
+
+                        if(typeof isUpdateProfile !=="undefined" && isUpdateProfile){
+                            showProfileData();
+                        }
+
+                    }
+                    else{
+                        localStorage.removeItem("accessToken");
+                    }
+                    showMainMenu();
+                }
+                
+            };
+            var formData = new FormData();
+            formData.append("accessToken", localStorage.getItem("accessToken"));
+            ajax.send(formData);
+        }
+        else{
+            showMainMenu();
+        }
+    }
+    function showMainMenu(){
+        var html ="";
+        if(localStorage.getItem("accessToken")){
+            html +='<li>';
+            html +='<a href="/pages">Pages</a>'
+            html +='</li>'
+
+            html +='<li>';
+            html +='<a href="/groups">Group</a>'
+            html +='</li>'
+
+            html +='<li>';
+            html +='<a href="/updateProfile">Update Profile</a>'
+            html +='</li>'
+            html +='<li>';
+            html +='<a href="/logout" onclick="return doLogout();">Log Out</a>'
+            html +='</li>'
+        }
+        else{
+            html +='<li>';
+            html +='<a href="/login">LogIn</a>'
+            html +='</li>'
+
+            html +='<li>';
+            html +='<a href="/signup">Signup</a>'
+            html +='</li>'
+        }
+        document.getElementById("main-menu").innerHTML =html;
+
+    }
+    function doLogout(){
+        localStorage.removeItem("accessToken");
+        return true;
+    }
+    window.onload =function(){
+        getUser();
+    };
+    window.onerror = function(file, line, error){
+        alert(file + " " + line + " " + error);
+    };
+</script> -->

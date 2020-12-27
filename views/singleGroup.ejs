@@ -1,0 +1,379 @@
+<link rel="stylesheet" href="/public/css/location.css">
+<link rel="stylesheet" href="/public/css/blog.css">
+<%- include ("includes/header") %>
+
+<div class="container">
+    <div class="col-md-12 row form-group" style="padding-top: 10px;">
+        <span class="title" id="title"></span>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card padxx">
+                <div class="card-body">  
+                    <a href="" class="nav-link pr-0 leading-none">
+                        <img id="avatar" class="avatar"></img>
+                        <span class="col-md-10">
+                            <span id="name-location" class="text-default"></span>
+                            <div class="row">
+                                <small class="text-muted col-md-6 col-lg-4 d-block mt-1">26 reviews</small>                                
+                            </div>
+                        </span>
+                        <span id="ismember" class="col-md-2">
+                            
+                        </span>
+                    </a>
+                    <div class="row review">
+                        <div class="text-muted col-md-2">
+                            Thức ăn: 8.00
+                        </div>
+                        <div class="text-muted col-md-3">
+                            Không gian: 8.00
+                        </div>
+                        <div class="text-muted col-md-2">
+                            Giá: 8.00
+                        </div>
+                        <div class="text-muted col-md-2">
+                            Dịch vụ: 8.00
+                        </div>
+                    </div>
+                    <div class="line"></div>
+                    <div class="row review">
+                        <div class="col-md-1">
+                            <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        </div>                        
+                        <span class="time">Giờ hoạt động: 24/7</span>
+                    </div>
+                    <div class="line"></div>
+                    <div class="row review">
+                        <div class="col-md-1">
+                            <i class="fa fa-map-marker" aria-hidden="true"></i>
+                        </div>                        
+                        <span id="description" class="time"></span>
+                    </div>
+                    <div class="col-md-12 review">
+                        <button type="button" onclick="return appendPost()" class="button button-custom" style="float: left;">Viết bài</button>
+                    </div>
+                </div>                 
+            </div>
+            <div id="append">
+
+            </div>
+            <div id="newsfeed">
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="_id" value="<%= _id %>">
+
+<script>
+    var isGroupDetail = true;
+
+    function appendPost(){
+        var html="";
+        html+='<div class="card padxx">'
+        html+='<div id="appendBlog" class="card-body">'
+        html+='<form method="post" class="padxxxx" id="form-add-post" onsubmit="return doPost(this);">';
+            html += '<input name="type" type="hidden" value="post">';
+            html+=' <div class="col-md-12 form-group">';
+                html+='<div class="row">';
+                    html+='<label class="col-md-4 col-lg-2" for="">Tiêu đề</label>';
+                    html+='<input name="caption" type="text" class="email form-control col-lg-10 col-md-8" placeholder="Tiêu đề cho bài viết" required>';
+                html+='</div>';
+            html+='</div>';
+            html+=' <div class="col-md-12 form-group">';
+                html+='<div class="row">';
+                    html+='<label class="col-md-4 col-lg-2" for="">Nội dung</label>';
+                    html+='<input name="content" type="text" class="email form-control col-lg-10 col-md-8" placeholder="Tiêu đề cho bài viết" required>';
+                html+='</div>';
+            html+='</div>';
+            html+='<div class="col-md-12 form-group">'
+                html+='<div class="row"> '
+                    html+='<div class="col-md-2">'
+                        html+='<label for="">Add to Your Post</label>'
+                    html+='</div>'  
+                    html+='<div class="col-md-10 form-control form-group">';
+                        html+='<div class="row">'
+                            html+='<div class="col-md-5 fileContainer">'
+                                html+='<i class="fa fa-image"></i>'
+                                html+='<input type="file" name="image" accept="image/*" onchange="previewPostImage(this);">'
+                                html+='<img class="col-md-6" id="post-img-preview" style="display: none; width: 50px;">'
+                                html+='<span>Thêm hình</span>'
+                            html+='</div>'
+                            html+='<div class="col-md-5 fileContainer">'
+                                html+='<i class="fas fa-video"></i>'
+                                html+='<input type="file" name="video" accept="video/*" onchange="previewPostVideo(this);">'
+                                html+='<video class="col-md-6" id="post-video-preview" controls style="display: none; width: 50px;"></video>'
+                                html+='<span>Thêm video</span>'
+                            html+='</div>'
+                        html+='</div>'
+                    html+='</div>'
+                html+='</div>'
+            html+='</div>'
+            html+='<div class="col-md-12">'
+                html+='<button type="submit" name="submit" style="float: left;" class="button button-custom">Đăng bài</button>'
+            html+='</div>'    
+        html+='</form>'
+        html+='</div>'
+        html+='</div>'
+        document.getElementById("append").innerHTML = html;
+    }
+
+    function getGroupDetail(){
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/getGroupDetail",true);
+
+        ajax.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                var response = JSON.parse(this.responseText);
+                document.getElementById("avatar").setAttribute("src", mainURL +"/"+response.data.coverPhoto);
+                document.getElementById("name-location").innerHTML=response.data.name;
+                document.getElementById("description").innerHTML=response.data.additionalInfo;
+
+                var isMember = false;
+                for(var a=0;a<response.data.members.length;a++){
+                    var member = response.data.members[a];
+                    var textfollow = "";
+                    if (member._id.toString()==user._id.toString()){
+                        isMember = true;
+                        textfollow+='<a href="javascript:void(0);"data-id="'+ response.data._id +'"onclick="toggleJoinGroup(this);"class="add-butn btn-unfriend">Leave</a>';
+                        document.getElementById("ismember").innerHTML = textfollow;
+                        break;
+                    }
+                    else{
+                        textfollow+='<a href="javascript:void(0);"data-id="'+ response.data._id +'"onclick="toggleJoinGroup(this);"class="add-butn">Join</a>';
+                        document.getElementById("ismember").innerHTML = textfollow;
+
+                    }
+                }
+
+                // appendPost();
+                // if (isMember) {
+                    
+                // }
+                var title ="";
+                title+="Trang chủ/ ";
+                title+= response.data.name;
+                document.getElementById("title").innerHTML = title;
+
+                var html = "";
+                response.posts = response.posts.reverse();
+                for (var a = 0; a< response.posts.length; a++) {
+                    var data = response.posts[a];
+                    console.log(data);
+                        html+='<div class="padxxx">';
+                            html+='<div class="card">';
+                                html+='<div class="card-header">';
+                                    html+='<a href="#" class="nav-link pr-0 leading-none">';
+                                        html+='<span class="avatar" style="background-image: url(/public/img/dalat.jpeg)"></span>';
+                                        html+='<span class="col-md-8">';
+                                            html+='<span class="name" name="name" class="text-default">' ;
+                                            html += data.uploader.name;
+                                            html+='</span>';
+                                            var createdAt = new Date(data.createdAt);
+                                            var date = createdAt.getDate() + "";
+                                            date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
+                                            html+='<small class="text-muted d-block mt-1">Published: ' + date + '</small>';
+                                        html+='</span>'
+                                    html+='</a>';
+                                html+='</div>';
+                                if (data.image != ""){
+                                    html+='<img class="card-img-top" src="' + mainURL + "/" + data.image + '">'
+                                }
+                                else{
+
+                                }
+                                if(data.video != ""){
+                                    html+='<video width="630px" height="auto" controls>';
+                                        html+='<source src="' + mainURL + "/" + data.video + '">';
+                                    html+='</video>';
+                                }
+                                else{
+
+                                }
+                                html+='<div class="card-body">';
+                                    html+='<div class="col-lg-12">';
+                                        html+='<div class="row">';
+                                            html+='<span class="user">';
+                                                html += data.caption;
+                                            html+='</span>';
+                                            html+='<span class="description col-lg-12">';
+                                                html += data.content;
+                                            html+='</span>';
+                                        html+='</div>';
+                                    html+='</div>';
+                                html+='</div>';
+                                
+                                html+=createLikesSection(data);
+                                
+                                html+='<div class="card-footer" id="post-comments-'+ data._id +'"">';
+                                    html+='<div class="col-md-12">';  
+                                        data.comments = data.comments.reverse();
+                                        for (var b = 0; b < data.comments.length; b++) {
+                                            var comment = data.comments[b];
+
+                                            html += '<div class="row">';
+                                                html += '<span class="user"><a href="' + mainURL + "/user/" + comment.user.username + '">' + comment.user.name + '</a></span>';
+                                                html += '<span class="description col-lg-9">' + comment.comment + '</span>';     
+                                                html += '<a style="text-decoration: none;" class="col-lg-3 replycmt" href="javascript:void(0);" data-post-id="' + data._id + '" data-comment-id="' + comment._id + '" onclick="prepareToReply(this);" title="Reply">Reply</a>';
+                                                // 
+                                                
+                                                html += '<ul>';
+                                                    comment.replies = comment.replies.reverse();
+                                                    for (var c = 0; c < comment.replies.length; c++) {
+                                                        var reply = comment.replies[c];
+                                                        html += '<li>';
+                                                            html += '<span class="user"><a href="' + mainURL + "/user/" + reply.user.username + '">' + reply.user.name + '</a></span>';
+                                                            html += '<span class="description col-lg-9">' + reply.reply + '</span>';
+                                                        html += '</li>';
+                                                    }
+                                                html += '</ul>';
+
+                                            html += '</div>';
+                                        }
+                                
+                                            // 
+                                        html += '<form method="post" onsubmit="return doPostComment(this);">';
+                                            html+='<div class="row">';
+                                                html+='<div class="comment col-md-10">';
+                                                    html += '<input type="hidden" name="_id" value="' + data._id + '">';
+                                                    html+='<input type="text" name="comment" class="input-field" placeholder="Viết bình luận">';
+                                                html+='</div>';
+                                                html+='<div class="col-md-2">';
+                                                    html += '<button class="postcmt" type="submit">Post</button>';
+                                                html+='</div>';
+                                            html+='</div>';
+                                        html += '</form>';
+                                    html+='</div>';
+                                html+='</div>';
+                            html+='</div>'
+                        html+='</div>'
+                }
+                document.getElementById("newsfeed").innerHTML = html;
+            }
+        };
+
+        var formData = new FormData();
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        formData.append("_id",document.getElementById("_id").value);
+        ajax.send(formData);
+    }
+
+    function doPost(form) {
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/addPost",true);
+
+        ajax.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200){
+
+                var response = JSON.parse(this.responseText);
+
+                if(response.status =="success"){
+                    document.getElementById("form-add-post").querySelector("input[name='image']").value = "";
+                    document.getElementById("form-add-post").querySelector("input[name='video']").value="";
+                    document.getElementById("form-add-post").querySelector("input[name='content']").value="";
+                    document.getElementById("form-add-post").querySelector("input[name='caption']").value="";
+
+                    document.getElementById("post-img-preview").style.display = "none";
+                    document.getElementById("post-video-preview").style.display ="none";
+
+                    Swal.fire({
+                        title: 'Congratulations!',
+                        text: 'Bạn đã post bài thành công',
+                        icon: 'success',
+                        timer: 2500
+                    })
+                    getGroupDetail();
+                }
+                else{
+                    Swal.fire({
+                        title: 'Sorry!',
+                        text: 'Bạn cần phải join nhóm trước khi post bài!',
+                        icon: 'error',
+                        timer: 2500
+                    })
+                }
+            }
+        };
+
+        form.type.value = "group_post";
+
+        var formData = new FormData(form);
+        formData.append("accessToken",localStorage.getItem("accessToken"));
+        formData.append("_id",document.getElementById("_id").value);
+        ajax.send(formData);
+
+        return false;
+    }
+
+    function toggleJoinGroup(self){
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/toggleJoinGroup",true);
+
+        ajax.onreadystatechange=function(){
+            if (this.readyState==4&&this.status==200){
+                var response = JSON.parse(this.responseText);
+
+                if(response.status=="success"){
+                    self.className = "add-butn btn-unfriend";
+                    self.innerHTML = "Leave";
+                    Swal.fire({
+                        title: 'Congratulations!',
+                        text: 'Bạn đã tham gia nhóm thành công',
+                        icon: 'success',
+                        timer: 2500
+                    })
+                }
+                if (response.status == "leaved"){
+                    self.className = "add-butn";
+                    self.innerHTML = "Join";
+                    Swal.fire({
+                        title: 'Congratulations!',
+                        text: 'Bạn đã rời nhóm thành công',
+                        icon: 'success',
+                        timer: 2500
+                    })
+                }
+
+                if (response.status == "error") {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.message,
+                        icon: 'error',
+                        timer: 2500
+                    })
+                }
+            }
+        };
+        var formData = new FormData();
+        formData.append("accessToken",localStorage.getItem("accessToken"));
+        formData.append("_id", self.getAttribute("data-id"));
+        ajax.send(formData);
+    }
+    
+</script>
+
+<%- include ("includes/footer") %>
+
+<div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Reply</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<div class="modal-body">
+				<form onsubmit="return doPostReply(this);">
+					<input type="hidden" name="postId">
+					<input type="hidden" name="commentId">
+					<input type="text" class="input-field" name="reply" placeholder="Reply comment in here" required>
+					<button class="button" style="float: right;" type="submit">Post</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

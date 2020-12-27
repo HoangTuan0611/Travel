@@ -1,0 +1,106 @@
+<link rel="stylesheet" href="public/css/main.css">
+<link rel="stylesheet" href="public/css/setting.css">
+<%- include ("includes/header") %>
+<div class="container container-custom">
+    <div class="row">
+        <div class="col-md-4 col-lg-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom: 10px; cursor: pointer; text-align: center;">
+                            <i class="fa fa-user-o" aria-hidden="true"></i> 
+                            <span class="title">   
+                                Thông tin tài khoản
+                            </span>
+                        </div>
+                        <div class="col-md-12" style="cursor: pointer;text-align: center;">
+                            <a style="text-decoration: none; color: #000;" class=" a-custom-header" href="/logout">
+                                <span>Đăng xuất</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label for="">Số điện thoại đăng nhập</label>
+                                <input type="text" class="form-control" placeholder="033679...">
+                                <span style="font-size: 12px;">*Liên hệ hotline Travel nếu bạn có nhu cầu thay đổi số điện thoại đăng nhập</span>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <span>Thông tin cá nhân</span>
+                            </div>
+                            <div class="col-md-12">
+                                <form onsubmit="return doUpdateProfile(this);">
+                                    <div class="col-md-12 form-group">
+                                        <div class="row">
+                                            <label class="col-md-4 col-lg-3" for="">Email</label>
+                                            <input id="email" name="email" type="text" class="email form-control col-lg-9 col-md-8" placeholder="nguyenhoangtuan@gmail.com" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-group">
+                                        <div class="row">
+                                            <label class="col-md-4 col-lg-3" for="">Tên hiển thị</label>
+                                            <input id="name" name="name" type="text" class="name form-control col-lg-9 col-md-8" placeholder="Hoàng Tuấn" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-group">
+                                        <div class="row">
+                                            <label class="col-md-4 col-lg-3" for="">Thành phố</label>
+                                            <input name="city" type="text" class="city form-control col-lg-9 col-md-8" placeholder="Hồ Chí Minh">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-group">
+                                        <div class="row">
+                                            <label class="col-md-4 col-lg-3" for="">Mô tả</label>
+                                            <input name="aboutMe" type="text" class="aboutMe form-control col-lg-9 col-md-8" placeholder="Hồ Chí Minh">
+                                        </div>
+                                    </div>
+                                    <button type="submit" name="submit" style="float: right;" class="button button-custom">
+                                        Xác nhận
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>                
+    </div>
+</div>
+<script>
+    var isUpdateProfile = true;
+    function showProfileData() {
+        document.querySelector(".name").value = window.user.name;
+        document.querySelector(".email").value = window.user.email;
+        document.querySelector(".city").value = window.user.city;
+        document.querySelector(".aboutMe").value = window.user.aboutMe;
+    }
+    function doUpdateProfile(form) {
+		form.submit.setAttribute("disabled", "disabled");
+		form.submit.innerHTML = "<span>Loading...</span>";
+
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/updateProfile", true);
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				form.submit.removeAttribute("disabled");
+				form.submit.innerHTML = "<span>Xác nhận</span>";
+
+				var response = JSON.parse(this.responseText);
+
+				alert(response.message);
+			}
+		};
+
+		var formData = new FormData(form);
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		ajax.send(formData);
+		return false;
+    }
+</script>
+<%- include ("includes/footer") %>

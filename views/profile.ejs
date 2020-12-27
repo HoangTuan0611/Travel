@@ -1,0 +1,430 @@
+<link rel="stylesheet" type="text/css" href="/public/css/main.css">
+<link rel="stylesheet" type="text/css" href="/public/css/profile.css">
+<%- include ("includes/header") %>
+<div class="container hidden-xs container-custom">
+    <div class="col-md-12 form-group" style="padding-top: 10px;">
+        <span class="title">Trang chủ/ Trang cá nhân</span>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <a href="" class="nav-link pr-0 leading-none">
+                <span class="avatar" style="background-image: url(/public/img/dalat.jpeg)"></span>
+                <span class="col-md-8">
+                    <span name="user-name" class="user-name text-default">
+                        
+                    </span>
+                    <div class="row">
+                        <small class="text-muted col-md-6 col-lg-4 d-block mt-1">0 đang theo dõi</small>
+                        <small class="text-muted col-md-6 col-lg-4 d-block mt-1">0 người theo dõi</small>
+                    </div>
+                </span>
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a style="text-decoration: none;" href="/setting">
+                <button class="button button-custom">
+                    Cài đặt
+                </button>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <ul class="col-md-12 nav" id="myTab" role="tablist" style="justify-content: center;">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#review" role="tab" aria-controls="home" aria-selected="true">Review</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#image" role="tab" aria-controls="profile" aria-selected="false">Hình ảnh</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="contact-tab" data-toggle="tab" href="#video" role="tab" aria-controls="contact" aria-selected="false">Video</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="contact-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="contact" aria-selected="false">Friends</a>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="review" role="tabpanel" aria-labelledby="home-tab">
+            <div class="container hidden-xs container-custom">
+                <div class="col-md-12 col-lg-7 offset-md-2">
+                    <div id="newsfeed">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="image" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="container-custom">
+                <div class="col-md-12">
+                    <div class="container">
+                        <div id="img-total" class="row">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="video" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="container-custom">
+                <div class="col-md-12">
+                    <div class="container">
+                        <div id="video-total" class="row">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="friends" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="container-custom">
+                <div class="col-md-12">
+                    <div class="container">
+                        <div id="friends-total">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include ("includes/footer") %>
+<script>
+    var isUpdateProfile = true;
+    function showProfileData() {
+        document.querySelector(".user-name").innerHTML = window.user.name;
+    }
+    var isHomePage = true;
+    function showNewsfeed() {
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/getNewsfeed", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
+                // console.log(response);
+                var html = "";
+                var total = "";
+                var video = "";
+                console.log(response.data.length);
+				for (var a = 0; a < response.data.length; a++) {
+                    var data = response.data[a];
+                    console.log(data)
+                    html+='<div class="row padxxx">';
+                        html+='<div class="card">';
+                            html+='<div class="card-header">';
+                                html+='<a href="#" class="nav-link pr-0 leading-none">';
+                                    html+='<span class="avatar" style="background-image: url(/public/img/dalat.jpeg)"></span>';
+                                    html+='<span class="col-md-8">';
+                                        html+='<span class="name" name="name" class="text-default">' ;
+                                        html += window.user.name;
+                                        html+='</span>';
+                                        var createdAt = new Date(data.createdAt);
+                                        var date = createdAt.getDate() + "";
+                                        date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
+                                        html+='<small class="text-muted d-block mt-1">Published: ' + date + '</small>';
+                                    html+='</span>'
+                                html+='</a>';
+                            html+='</div>';
+                            if (data.image != ""){
+                                html+='<img class="card-img-top" src="' + mainURL + "/" + data.image + '">'
+                            }
+                            else{
+
+                            }
+                            if(data.video != ""){
+                                html+='<video width="630px" height="auto" controls>';
+                                    html+='<source src="' + mainURL + "/" + data.video + '">';
+                                html+='</video>';
+                            }
+                            else{
+
+                            }
+                            html+='<div class="card-body">';
+                                html+='<div class="col-lg-12">';
+                                    html+='<div class="row">';
+                                        html+='<span class="user">';
+                                            html += window.user.name;
+                                        html+='</span>';
+                                        html+='<span id="caption" class="description col-lg-12">';
+                                            html += data.content;
+                                        html+='</span>';
+                                    html+='</div>';
+                                html+='</div>';
+                            html+='</div>';
+                            //
+                            html+=createLikesSection(data);
+                            //
+                            html+='<div class="card-footer" id="post-comments-'+ data._id +'"">';
+                                html+='<div class="col-md-12">';  
+                                    data.comments = data.comments.reverse();
+                                    for (var b = 0; b < data.comments.length; b++) {
+                                        var comment = data.comments[b];
+
+                                        html += '<div class="row">';
+                                            html += '<span class="user"><a href="/">' + comment.user.name + '</a></span>';
+                                            // var createdAt = new Date(comment.createdAt);
+                                            // var date = createdAt.getDate() + "";
+                                            // date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
+                                            // html += '<span>' + date + '</span>';
+                                            
+                                            html += '<span class="description col-lg-9">' + comment.comment + '</span>';     
+                                            html += '<a style="text-decoration: none;" class="col-lg-3 replycmt" href="javascript:void(0);" data-post-id="' + data._id + '" data-comment-id="' + comment._id + '" onclick="prepareToReply(this);" title="Reply">Reply</a>';
+                                            // 
+                                            
+                                            html += '<ul>';
+                                                comment.replies = comment.replies.reverse();
+                                                for (var c = 0; c < comment.replies.length; c++) {
+                                                    var reply = comment.replies[c];
+                                                    html += '<li>';
+                                                        html += '<span class="user"><a href="/">' + reply.user.name + '</a></span>';
+                                                        html += '<span class="description col-lg-9">' + reply.reply + '</span>';
+                                                    html += '</li>';
+                                                }
+                                            html += '</ul>';
+
+                                        html += '</div>';
+                                    }
+                               
+                                        // 
+                                    html += '<form method="post" onsubmit="return doPostComment(this);">';
+                                        html+='<div class="row">';
+                                            html+='<div class="comment col-md-10">';
+                                                html += '<input type="hidden" name="_id" value="' + data._id + '">';
+                                                html+='<input type="text" name="comment" class="input-field" placeholder="Viết bình luận">';
+                                            html+='</div>';
+                                            html+='<div class="col-md-2">';
+                                                html += '<button class="postcmt" type="submit">Post</button>';
+                                            html+='</div>';
+                                        html+='</div>';
+                                    html += '</form>';
+                                html+='</div>';
+                            html+='</div>';
+                        html+='</div>'
+                    html+='</div>'
+
+                    ///
+                    if (data.image != ""){
+                        total+='<div class="form-group blog-review col-md-6 col-lg-3">';
+                            total+='<a class="media-1" data-fancybox="gallery">';
+                                    total+='<img src="' + mainURL + "/" + data.image + '" alt="Image" style="object-fit: cover;height:160px; width:100%" class="img-fluid">';
+                            total+='</a>';
+                        total+='</div>';
+                    }
+                    else{
+                        
+                    } 
+                           
+                    if (data.video != "")
+                    {
+                        video+='<div class="form-group blog-review col-md-6 col-lg-3">';
+                            video+='<a class="media-1" data-fancybox="gallery">';
+                                    video+='<video width="100%" height="auto" controls>';
+                                        video+='<source src="' + mainURL + "/" + data.video + '">';
+                                    video+='</video>';
+                            video+='</a>';
+                        video+='</div>';
+                    }
+                    else{
+                        
+                    }
+				}
+				document.getElementById("newsfeed").innerHTML = html;
+				document.getElementById("img-total").innerHTML = total;
+				document.getElementById("video-total").innerHTML = video;
+			}
+		};
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		ajax.send(formData);
+	}
+
+    var isFriends = true;
+    function showFriends(){
+        var html = "";
+        for(var a = 0; a < window.user.friends.length; a++){
+            var data = window.user.friends[a];
+            html+='<div class="row padxx" style="text-align: center;">';
+                html+='<i style="padding-top: 7px;" class="col-lg-1 fas fa-user"></i>';
+                html += '<h4 class="col-md-5">';
+                    html += '<a href="/">' + data.name + '</a>';
+                html += '</h4>';
+                if(!data.sentByMe && data.status == "Pending"){
+                    html += '<a style="margin-right: 20px;text-decoration: none;" class="col-lg-2 friend" href="javascript:void(0);" data-id="' + data._id + '" onclick="doAccept(this);" title="Accept">Accept</a>';
+                    html += '<a style="margin-right: 20px;text-decoration: none;" class="col-lg-2 friend" href="javascript:void(0);" data-id="' + data._id + '" onclick="doUnfriend(this);" title="Accept">Delete</a>';
+                }
+                else if(data.sentByMe && data.status == "Pending"){
+                    html += '<a style="margin-right: 20px; text-decoration: none;" class="col-lg-2 friend" href="javascript:void(0);" data-id="' + data._id + '" onclick="doUnfriend(this);" title="Cancel">Cancel</a>';
+                }
+                else{
+                    html += '<a style="margin-right: 20px; text-decoration: none;" class="col-lg-2 friend" href="javascript:void(0);" data-id="' + data._id + '" onclick="doUnfriend(this);" title="Unfriend">Unfriend</a>';
+                }
+                if (data.status != "Pending"){
+                    html += '<a style="margin-right: 20px;text-decoration: none;" class="col-lg-2 friend" href="/inbox" data-id="' + data._id + 'title="Inbox">Inbox</a>';
+                }
+            html+='</div>'
+        }
+        document.getElementById("friends-total").innerHTML = html;
+    }
+    function friendSelected(self) {
+        document.getElementById("myForm").style.display = "block";
+        var _id = self.getAttribute("data-id");
+        friends = window.user.friends;
+        var index = friends.findIndex(function(friend){
+            return friend._id == _id
+        });
+        selectedFriend = friends[index];
+        var html = "";
+        html += '<span class="text-default">' + selectedFriend.name + '</span>';
+        html += '<i onclick="closeForm()" style="cursor: pointer ;float:right;" class="fas fa-times"></i>';
+        document.getElementById("conversation-head").innerHTML = html;
+
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/getFriendsChat",true);
+        ajax.onreadystatechange = function(){
+            if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
+                
+                var html ="";
+                for (var a =0;a< response.data.length;a++){
+                    var inbox = response.data[a];
+                    if (inbox.from == window.user._id) {
+                        html += '<li class="me">';
+                            html += '<p>' + inbox.message + '</p>';
+                        html += '</li>';
+                    } else {
+                        html += '<li class="you">';
+                            html += '<p>' + inbox.message + '</p>';
+                        html += '</li>';
+                    }
+                }
+                document.getElementById("chatting-area").innerHTML = html;
+
+                var objDiv = document.getElementById("chatting-area");
+                objDiv.scrollTop = objDiv.scrollHeight;
+            }
+        };
+        var formData = new FormData();
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        formData.append("_id",_id);
+        ajax.send(formData);
+    }
+    // 
+    function doSendMessage(form) {
+        if (selectedFriend == null) {
+            return false;
+        }
+        var message = form.message.value;
+
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/sendMessage", true);
+
+        ajax.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
+
+                if(response.status == "success") {
+                    var html = "";
+
+                    html += '<li class="me">';
+                        html += '<p>' + message + '</p>';
+                    html += '</li>';
+
+                    document.getElementById("chatting-area").innerHTML += html;
+                    form.message.value = "";
+
+                    var objDiv = document.getElementById("chatting-area");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                }
+            }
+        };
+        var formData = new FormData(form);
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        formData.append("_id", selectedFriend._id);
+        ajax.send(formData);
+        return false;
+    }
+    function connectSocket() {
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/connectSocket", true);
+
+        ajax.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
+
+                socketIO.on("messageReceived", function(messageObj){
+                    if (selectedFriend != null && messageObj.from == selectedFriend._id) {
+                        var html = "";
+
+                        html += '<li class="you">';
+                            html += '<p>'+ messageObj.message + '</p>';
+                        html += '</li>';
+
+                        document.getElementById("chatting-area").innerHTML += html;
+
+                        var objDiv = document.getElementById("chatting-area");
+                        objDiv.scrollTop = objDiv.scrollHeight;
+                    }
+                });
+            }
+        };
+        var formData = new FormData();
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        ajax.send(formData);
+    }
+
+    function doAccept(self){
+        var _id = self.getAttribute("data-id");
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/acceptFriendRequest", true);
+        ajax.onreadystatechange = function(){
+            if (this.readyState == 4 && this.status == 200){
+                var response = JSON.parse(this.responseText);
+                alert(response.message);
+                self.remove();
+            }
+        };
+        var formData = new FormData();
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        formData.append("_id",_id);
+        ajax.send(formData);
+    }
+    function doUnfriend(self){
+        var _id = self.getAttribute("data-id");
+
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/unfriend",true);
+        ajax.onreadystatechange = function() {
+            if (this.readyState ==4 && this.status ==200){
+                var response = JSON.parse(this.responseText);
+                alert(response.message);
+                self.remove();
+            }
+        };
+        var formData = new FormData();
+        formData.append("accessToken",localStorage.getItem("accessToken"));
+        formData.append("_id",_id);
+        ajax.send(formData);
+    }
+
+    
+</script>
+
+<div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Reply</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<div class="modal-body">
+				<form onsubmit="return doPostReply(this);">
+					<input type="hidden" name="postId">
+					<input type="hidden" name="commentId">
+					<input type="text" class="input-field" name="reply" placeholder="Reply comment in here" required>
+					<button class="button" style="float: right;" type="submit">Post</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,98 @@
+*{
+    font-family: 'Quicksand', sans-serif;
+}
+.title{
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.pad{
+    margin-bottom: 10px;
+}
+
+.padxx{
+    margin-bottom: 30px;
+}
+
+.padxxx{
+    margin-bottom: 40px;
+}
+.padxxxx{
+    margin-bottom: 100px;
+}
+
+.postcmt {
+    display: inline-block;
+    min-width: 100px;
+    padding: 0 20px;
+    height: 40px;
+    line-height: 36px;
+    border-radius: 40px;
+    font-size: 12px;
+    letter-spacing: 0.065em;
+    text-transform: uppercase;
+    font-weight: 600;
+    /* font-family: Montserrat, Helvetica, sans-serif; */
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer;
+    color: #333435;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color .25s ease-out, box-shadow .25s ease;
+}
+
+.replycmt {
+    display: inline-block;
+    min-width: 100px;
+    padding: 0 20px;
+    height: 40px;
+    line-height: 36px;
+    border-radius: 40px;
+    font-size: 12px;
+    letter-spacing: 0.065em;
+    text-transform: uppercase;
+    font-weight: 600;
+    /* font-family: Montserrat, Helvetica, sans-serif; */
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer;
+    color: #333435;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color .25s ease-out, box-shadow .25s ease;
+}
+
+.replycmt:hover{
+    color: #333435;
+}
+
+.friend{
+    display: inline-block;
+    min-width: 100px;
+    padding: 0 20px;
+    height: 40px;
+    line-height: 36px;
+    border-radius: 40px;
+    font-size: 12px;
+    letter-spacing: 0.065em;
+    text-transform: uppercase;
+    font-weight: 600;
+    /* font-family: Montserrat, Helvetica, sans-serif; */
+    background-color: #f6f6f6;
+    border: 2px solid transparent;
+    cursor: pointer;
+    color: #333435;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color .25s ease-out, box-shadow .25s ease;
+}
+
+.text-default {
+    font-weight: 600;
+    color: #000;
+}
+li{
+    list-style: none;
+    cursor: pointer;
+}

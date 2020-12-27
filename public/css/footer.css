@@ -1,0 +1,36 @@
+
+.custom-footer{
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.row-padding-bottom{
+    padding-bottom: 10px;
+}
+.container-border{
+    border-bottom: 1px solid #495057;
+}
+.facebook{
+    text-align: end;
+}
+.insta{
+    text-align: start;
+}
+.link{
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+}
+.row-padding{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.footer-info{
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 767px) {
+    .hidden-xs{
+        display: none;
+    }
+}

@@ -1,0 +1,29 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    grid-column-gap: 50px;
+}
+
+.grid-item {
+    border: solid thin black;
+}
+
+.grid-content {
+    padding: 20px;
+}
+
+.content-padding {
+    padding-top: 5px;
+}
+
+p {
+    font-size: 12px;
+}
+
+.info{
+    border: 1px solid #000;
+}
+
+.container-custom{
+    padding-top: 20px;
+}

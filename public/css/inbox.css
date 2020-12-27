@@ -1,0 +1,70 @@
+.you{
+    background: #01C8EE;
+    min-height: 30px;
+    padding-left: 20px;
+    border-radius: 25px;
+    margin-bottom: 15px;
+    float: left;
+    margin-left: 0;
+    margin-right: 8px;
+    min-width: 70%;
+
+}
+.me{
+    background: #DDE5E7;
+    min-height: 30px;
+    padding-left: 20px;
+    border-radius: 25px;
+    margin-bottom: 15px;
+    float: right;
+    margin-left: 0;
+    margin-right: 8px;
+    min-width: 70%;
+}
+li {
+    list-style: none;
+}
+.mess-item{
+    padding-top: 3px;
+}
+
+.buttonsend {
+    display: inline-block;
+    padding: 0 20px;
+    height: 40px;
+    line-height: 36px;
+    border-radius: 40px;
+    font-size: 12px;
+    letter-spacing: 0.065em;
+    text-transform: uppercase;
+    font-weight: 600;
+    /* font-family: Montserrat, Helvetica, sans-serif; */
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer;
+    color: #333435;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color .25s ease-out, box-shadow .25s ease;
+}
+
+.card-body{
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.form-popup {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    right: 15px;
+    /* border: 3px solid #f1f1f1; */
+    z-index: 9;
+}
+
+.friendss{
+    /* border-bottom: 1px solid rgba(0,0,0,.125); */
+    list-style: none;
+    /* min-height: 50px; */
+    padding-top: 10px;
+}

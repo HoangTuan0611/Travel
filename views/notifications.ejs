@@ -1,0 +1,116 @@
+
+<%- include ("includes/header") %>
+<div class="container">
+    <div class="col-md-12">
+        <label class="title">Notifications</label>
+    </div>
+    <div class="col-md-12">
+        <ul id="all-notifications"></ul>
+    </div>
+</div>
+
+<script>
+	var isNotifications = true;
+
+	function showNotifications() {
+		var html = "";
+
+		var notifications = window.user.notifications.reverse();
+
+		for (var a = 0; a < notifications.length; a++) {
+			var data = notifications[a];
+			html += '<li>';
+				if (data.type == "new_comment" || data.type == "photo_liked")
+				{
+					html += "<a href='/post/" + data.post._id + "'>";
+				}
+					html += '<figure><img src="' + mainURL + '/' + data.profileImage + '" style="width: 45px; height: 45px; object-fit: cover;"></figure>';
+					html += '<div class="notifi-meta">';
+						html += '<p>' + data.content + '</p>';
+
+						var createdAt = new Date(data.createdAt);
+						var date = createdAt.getDate() + "";
+						date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
+						date += " " + createdAt.getHours() + ":" + createdAt.getMinutes();
+
+						html += '<span>' + date + '</span>';
+					html += '</div>';
+
+				if (data.type == "new_comment" || data.type == "photo_liked")
+				{
+					html += "</a>";
+				}
+
+			html += '</li>';
+		}
+
+		document.getElementById("all-notifications").innerHTML = html;
+    }
+    function acceptRequestJoinGroup(self) {
+			
+			var ajax = new XMLHttpRequest();
+			ajax.open("POST", "/acceptRequestJoinGroup", true);
+			ajax.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+					if(response.status == "success"){
+						self.remove();
+					}
+					else{
+						alert(response.message);
+					}
+					
+				}
+			};
+			var formData = new FormData();
+			formData.append("accessToken", localStorage.getItem("accessToken"));
+			formData.append("_id", self.getAttribute("data-id"));
+			formData.append("groupId", self.getAttribute("data-groupId"));
+			formData.append("userId", self.getAttribute("data-userId"));
+			ajax.send(formData);
+		}
+    function rejectRequestJoinGroup(self) {
+			
+			var ajax = new XMLHttpRequest();
+			ajax.open("POST", "/rejectRequestJoinGroup", true);
+			ajax.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+					if(response.status == "success"){
+						self.nextElementSibling.remove();
+						self.remove();
+					}
+					else{
+						alert(response.message);
+					}
+					
+				}
+			};
+			var formData = new FormData();
+			formData.append("accessToken", localStorage.getItem("accessToken"));
+			formData.append("_id", self.getAttribute("data-id"));
+			formData.append("groupId", self.getAttribute("data-groupId"));
+			formData.append("userId", self.getAttribute("data-userId"));
+			ajax.send(formData);
+		}
+    function markNotificationsAsRead() {
+			var ajax = new XMLHttpRequest();
+			ajax.open("POST", "/markNotificationsAsRead", true);
+			ajax.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+					console.log(response);
+					if (response.status == "success") {
+						//
+					} else {
+						alert(response.message);
+					}
+				}
+			};
+			var formData = new FormData();
+			formData.append("accessToken", localStorage.getItem("accessToken"));
+			ajax.send(formData);
+        }
+</script>
+
+<%- include ("includes/footer") %>

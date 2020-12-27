@@ -1,0 +1,219 @@
+<%- include ("includes/header") %>
+<link rel="stylesheet" type="text/css" href="/public/css/profile.css">
+<div class="container hidden-xs container-custom">
+    <div class="col-md-12 form-group" style="padding-top: 10px;">
+        <span class="title">Trang chủ/ Trang cá nhân</span>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <a href="" class="nav-link pr-0 leading-none">
+                <span class="avatar" style="background-image: url(/public/img/dalat.jpeg)"></span>
+                <span class="col-md-8">
+                    <span name="user-name" class="user-name text-default">
+                        <%= user.name %>
+                    </span>
+                    <div class="row">
+                        <small class="text-muted col-md-6 col-lg-4 d-block mt-1">0 đang theo dõi</small>
+                        <small class="text-muted col-md-6 col-lg-4 d-block mt-1">0 người theo dõi</small>
+                    </div>
+                </span>
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a style="text-decoration: none;" href="/setting">
+                <button class="button button-custom">
+                    Cài đặt
+                </button>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <ul class="col-md-12 nav" id="myTab" role="tablist" style="justify-content: center;">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#info" role="tab" aria-controls="home" aria-selected="true">Info</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="home-tab" data-toggle="tab" href="#review" role="tab" aria-controls="home" aria-selected="false">Review</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#image" role="tab" aria-controls="profile" aria-selected="false">Hình ảnh</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="contact-tab" data-toggle="tab" href="#video" role="tab" aria-controls="contact" aria-selected="false">Video</a>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+            <div class="container hidden-xs container-custom">
+                <div class="col-md-12 col-lg-7 offset-md-2">
+                    <input type="hidden" id="userid" value="<%= user.username %>">
+                    <div class="row form-group">
+                        <label class="col-md-4">
+                            <span>Full name</span>
+                        </label>
+                        <div class="col-md-8">
+                            <span><%= user.name %></span>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="col-md-4">
+                            <span>Email</span>
+                        </label>
+                        <div class="col-md-8">
+                            <span><%= user.email %></span>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="col-md-4">
+                            <span>Ngày sinh</span>
+                        </label>
+                        <div class="col-md-8">
+                            <span><%= user.dob == "" ? "Chưa rõ" : user.dob %></span>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="col-md-4">
+                            <span>Giới tính</span>
+                        </label>
+                        <div class="col-md-8">
+                            <span><%= user.gender == "" ? "Chưa rõ" : user.gender %></span>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="col-md-4">
+                            <span>Quốc gia</span>
+                        </label>
+                        <div class="col-md-8">
+                            <span><%= user.country == "" ? "Chưa rõ" : user.country %></span>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="col-md-4">
+                            <span>Mô tả</span>
+                        </label>
+                        <div class="col-md-8">
+                            <span><%= user.aboutMe == "" ? "Chưa rõ" : user.aboutMe %></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="home-tab">
+            <div class="container hidden-xs container-custom">
+                <div class="col-md-12 col-lg-7 offset-md-2">
+                    <div id="newsfeed">
+                        <% for(var i=0; i<user.posts.length; i++) {%>
+                            <div class="row padxxx">
+                                <div class="card">
+                                    <div class="card-header" style="padding: 10px !important; background-color: #fff;">
+                                        <a href="#" class="nav-link pr-0 leading-none">
+                                            <span class="avatar" style="background-image: url(/public/img/drink.jpg)"></span>
+                                            <span class="col-md-8">
+                                                <span class="name" name="name" class="text-default">
+                                                    <%= user.name %>
+                                                </span>
+                                                <small class="text-muted d-block mt-1">Published: </small>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <img class="card-img-top" src="http://localhost:3000/<%= user.posts[i].image%>">
+                                    <div class="card-body">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <span class="user"><%= user.name %></span>
+                                                <span class="description col-lg-12"><%= user.posts[i].content%></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer" id="post-comments-<%= user.posts[i]._id%>">
+                                        <div class="col-lg-12">
+                                            <% for(var j=0; j<user.posts[i].comments.length; j++) {%>
+                                                <div class="row">
+                                                    <span class="user"><%= user.posts[i].comments[j].user.name%></span>
+                                                    <span class="description col-lg-8"><%= user.posts[i].comments[j].comment%></span>
+                                                    <a style="text-decoration: none;" class="col-lg-3 replycmt" href="javascript:void(0);" data-post-id="<%= user.posts[i]._id%>" data-comment-id="<%= user.posts[i].comments[j]._id%>" onclick="prepareToReply(this);" title="Reply">Reply</a>
+                                                    
+                                                    <ul>
+                                                        <% for(var a=0; a<user.posts[i].comments[j].replies.length; a++) {%>
+                                                        <li>
+                                                            <span class="user">
+                                                                <%= user.posts[i].comments[j].replies[a].user.name%>
+                                                            </span>
+                                                            <span class="description col-lg-9">
+                                                                <%= user.posts[i].comments[j].replies[a].reply%>
+                                                            </span>
+                                                        </li>
+                                                        <%} 
+                                                    %>
+                                                    </ul>
+                                                    
+                                                </div>
+                                                
+                                            <%} 
+                                            %>
+                                            <form method="post" onsubmit="return doPostComment(this);">
+                                                <div class="row">
+                                                    <div class="comment col-md-10">
+                                                        <input type="hidden" name="_id" value="<%= user.posts[i]._id%>">
+                                                        <input type="text" name="comment" class="input-field" placeholder="Viết bình luận">
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <button class="postcmt" type="submit">Post</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <%} 
+                        %>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="image" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="container-custom">
+                <div class="col-md-12">
+                    <div class="container">
+                        <div id="img-total" class="row">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="video" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="container-custom">
+                <div class="col-md-12">
+                    <div class="container">
+                        <div id="video-total" class="row">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include ("includes/footer") %>
+<div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Reply</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<div class="modal-body">
+				<form onsubmit="return doPostReply(this);">
+					<input type="hidden" name="postId">
+					<input type="hidden" name="commentId">
+					<input type="text" class="input-field" name="reply" placeholder="Reply comment in here" required>
+					<button class="button" style="float: right;" type="submit">Post</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

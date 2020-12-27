@@ -1,0 +1,89 @@
+<link rel="stylesheet" href="public/css/main.css">
+<link rel="stylesheet" href="public/css/blog.css">
+<%- include ("includes/header") %>
+<div class="container hidden-xs container-custom">
+    <div class="col-md-12 form-group" style="padding-top: 10px;">
+        <span class="title">Trang chủ/ Viết bài</span>
+    </div>
+    <div class="container">
+        <form method="post" class="padxxxx" id="form-add-post" onsubmit="return doPost(this);">
+            <div class="col-md-12 form-group">
+                <div class="row">
+                    <label class="col-md-4 col-lg-2" for="">Tiêu đề</label>
+                    <input name="caption" type="text" class="email form-control col-lg-10 col-md-8" placeholder="Tiêu đề cho bài viết" required>
+                </div>
+            </div>
+            <div class="col-md-12 form-group">
+                <div class="row">
+                    <label class="col-md-4 col-lg-2" for="">Nội dung</label>
+                    <textarea class="col-md-12 form-control col-lg-10" name="content" id="" cols="30" rows="5" placeholder="Hãy viết cảm nhận của bạn"></textarea>
+                </div>
+            </div>
+            <div class="col-md-12 form-group">
+                <div class="row">   
+                    <div class="col-md-2">
+                        <label for="">Add to Your Post</label>
+                    </div>
+                    <div class="col-md-10 form-control form-group">
+                        <div class="row">
+                            <div class="col-md-5 fileContainer">
+                                <i class="fa fa-image"></i>
+                                <input type="file" name="image" accept="image/*" onchange="previewPostImage(this);">
+                                <img class="col-md-6" id="post-img-preview" style="display: none; width: 50px;">
+                                <span>Thêm hình</span>
+                            </div>
+                            <div class="col-md-5 fileContainer">
+                                <i class="fas fa-video"></i>
+                                <input type="file" name="video" accept="video/*" onchange="previewPostVideo(this);">
+                                <video class="col-md-6" id="post-video-preview" controls style="display: none; width: 50px;"></video>
+                                <span>Thêm video</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <button type="submit" name="submit" style="float: left;" class="button button-custom">Đăng bài
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script>
+    function doPost(form) {
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST", "/addPost", true);
+
+        ajax.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+
+                var response = JSON.parse(this.responseText);
+
+                if (response.status == "success") {
+                    document.getElementById("form-add-post").querySelector("input[name='image']").value = "";
+                    document.getElementById("form-add-post").querySelector("input[name='video']").value = "";
+                    document.getElementById("form-add-post").querySelector("input[name='caption']").value = "";
+                    document.getElementById("form-add-post").querySelector("textarea[name='content']").value = "";
+
+                    document.getElementById("post-img-preview").style.display = "none";
+                    document.getElementById("post-video-preview").style.display = "none";
+                    Swal.fire({
+                        title: 'Congratulations!',
+                        text: 'Bạn đã post bài thành công',
+                        icon: 'success',
+                        timer: 2500
+                    });
+                    setTimeout(function() {
+                        window.location.href = "/profile";
+                    }, 2500);     
+                }    
+            }
+        };
+        var formData = new FormData(form);
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		ajax.send(formData);
+		return false;
+    }    
+</script>
+<%- include ("includes/footer") %>

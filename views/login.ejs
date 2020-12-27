@@ -1,0 +1,158 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="/public/css/login.css">
+		<link rel="stylesheet" href="/public/css/main.css">
+		<link href="/public/plugin/fontawesome-free-5.15.1-web/css/all.css" rel="stylesheet"> <!--load all styles -->
+		<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600;700&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		<%- include ("includes/header") %>
+		<div class="test">
+			<div class="hero">
+				<div class="form-box" id="form-change">
+					<div class="button-box">
+						<div id="btn"></div>
+						<button type="button" class="toggle-btn" onclick="login()">Login</button>
+						<button type="button" class="toggle-btn" onclick="register()">Register</button>
+					</div>
+					<form onsubmit="return doLogin(this);" id="login" class="input-group">
+						<input type="text" name="email" class="input-field" placeholder="Email" required>
+						<input type="password" name="password" class="input-field" placeholder="Password" required>
+						<button type="submit" name="submit" class="btn-cus-login button-custom">
+							<a style="text-decoration: none; color: #000;" class="a-custom-header">
+								Log in
+							</a>
+						</button>
+					</form>
+					<form style="padding-top: 40px;" onsubmit="return doRegister(this);" id="register" class="input-group">
+						<input type="text" class="input-field" name="name" placeholder="Full name" required>
+						<input type="text" class="input-field" name="username" placeholder="Username" required>
+						<input type="email" class="input-field" name="email" placeholder="Email" required>
+						<input type="password" class="input-field" name="password" placeholder="Password" required>
+						<div class="group">
+							<input type="checkbox" class="check-box"> 
+							<span style="padding-top: 27px;">I argee to the terms & conditions</span>
+						</div>
+						<div style="display: flex;">
+							<div class="radio">
+								<label>
+									<input type="radio" name="gender" value="Male" checked />
+									<i class="check-box"></i> Male
+								</label>
+							</div>
+							<div class="radio">
+								<label>
+									<input type="radio" name="gender" value="Female" />
+									<i class="check-box"></i> Female
+								</label>
+							</div>
+						</div>
+						<button type="submit" name="submit" class="btn-cus-login button-custom" style="margin-top: 10px;">
+							<a style="text-decoration: none; color: #000;" class="a-custom-header">
+								Register
+							</a>
+						</button>
+					</form>
+				</div>
+			</div>	
+		</div>	
+		<script>
+			function login(){
+				var x = document.getElementById("login");
+				var y = document.getElementById("register");
+				var z = document.getElementById("btn");
+				var form = document.getElementById("form-change");
+				x.style.left = "50px";
+				y.style.left = "400px";
+				z.style.left = "0";
+				form.style.height = "450px"
+			}
+			function register(){
+				var x = document.getElementById("login");
+				var y = document.getElementById("register");
+				var z = document.getElementById("btn");
+				var form = document.getElementById("form-change");
+				x.style.left = "-400px";
+				y.style.left = "50px";
+				y.style.top = "-42%"
+				z.style.left = "115px";
+				form.style.height = "550px"
+			}
+			function doLogin(form) {
+				form.submit.setAttribute("disabled", "disabled");
+				form.submit.innerHTML = "<span>Loading...</span>";
+				
+				var ajax = new XMLHttpRequest();
+				ajax.open("POST", "/login", true);
+
+				ajax.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						form.submit.removeAttribute("disabled");
+						form.submit.innerHTML = "<span>Login</span>";
+						var response = JSON.parse(this.responseText);
+						if (response.status == "success") {
+							var accessToken = response.accessToken;
+							localStorage.setItem("accessToken", accessToken);
+							if (response.profileImage == "") {
+								window.location.href = "/home";
+								setTimeout(function() {
+									Swal.fire({
+									title: 'Welcome!',
+									text: 'Chào mừng bạn đến với mạng xã hội du lịch',
+									timer: 2500
+									});
+								}, 1000);  
+							} else {
+								window.location.href = "/home";
+								setTimeout(function() {
+									Swal.fire({
+									title: 'Welcome!',
+									text: 'Chào mừng bạn đến với mạng xã hội du lịch',
+									timer: 2500
+									});
+								}, 1000);  
+							}
+						} else {
+							alert(response.message);
+						}
+					}
+				};
+
+				ajax.send(new FormData(form));
+				return false;
+			}
+			function doRegister(form) {
+			form.submit.setAttribute("disabled", "disabled");
+			form.submit.innerHTML = "<span>Loading...</span>";
+
+			var ajax = new XMLHttpRequest();
+			ajax.open("POST", "/signup", true);
+
+			ajax.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					form.submit.removeAttribute("disabled");
+					form.submit.innerHTML = "<span>Register</span>";
+
+					var response = JSON.parse(this.responseText);
+
+					if (response.status == "success") {
+						Swal.fire({
+                        title: 'Congratulations!',
+                        text: 'Bạn đã đăng ký tài khoản thành công',
+                        icon: 'success',
+                        timer: 2500
+						});
+						setTimeout(function() {
+							window.location.href = "/login";
+                    	}, 2500); 
+					}
+				}
+			};
+
+			ajax.send(new FormData(form));
+			return false;
+		}
+		</script>
+		<%- include ("includes/footer") %>
+	</body>
+</html>

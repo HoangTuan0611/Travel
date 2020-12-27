@@ -1,0 +1,71 @@
+<%- include ("includes/header") %>
+<div class="container hidden-xs container-custom">
+    <div class="col-md-12 form-group" style="padding-top: 10px;">
+        <span class="title">Trang chủ/ Quản lý lịch trình</span>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <a href="" class="nav-link pr-0 leading-none">
+                <span class="avatar" style="background-image: url(/public/img/dalat.jpeg)"></span>
+                <span class="col-md-8">
+                    <span name="user-name" class="user-name text-default">
+                        
+                    </span>
+                    <div class="row">
+                        <small class="text-muted col-md-6 col-lg-4 d-block mt-1">0 đang theo dõi</small>
+                        <small class="text-muted col-md-6 col-lg-4 d-block mt-1">0 người theo dõi</small>
+                    </div>
+                </span>
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a style="text-decoration: none;" href="/setting">
+                <button class="button button-custom">
+                    Tạo tour
+                </button>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <ul class="col-md-12 nav" id="myTab" role="tablist" style="justify-content: center;">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#review" role="tab" aria-controls="home" aria-selected="true">Quản lý</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#image" role="tab" aria-controls="profile" aria-selected="false">Lịch sử</a>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="review" role="tabpanel" aria-labelledby="home-tab">
+            <div class="container hidden-xs container-custom">
+                    <div class="row">
+                      <div class="form-group blog-review pt">
+                        <a href="#" class="pad media-1" data-fancybox="gallery">
+                            <img src="public/img/saigon.jpeg" alt="Image" class="img-fluid-home">
+                            <div class="media-1-content">
+                                <span class="category">
+                                
+                                </span>
+                            </div>
+                        </a>
+                        <div class="title">
+                            <span>Sài Gòn Water Bus</span>
+                        </div>
+                      </div>
+                    </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="image" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="container-custom">
+                <div class="col-md-12">
+                    <div class="container">
+                        <div id="img-total" class="row">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include ("includes/footer") %>

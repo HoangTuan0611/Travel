@@ -1,0 +1,61 @@
+
+<link rel="stylesheet" href="public/css/category.css">
+<link rel="stylesheet" href="public/css/main.css">
+<%- include ("includes/header") %>
+<div class="container container-customer">
+    <div class="col-md-12 form-group" style="padding-top: 10px;">
+        <span class="title">Trang chủ/ Bài viết đã lưu</span>
+    </div>
+    <div class="col-md-11 offset-md-1 form-group">
+        <div class="row" id="allSaved">
+        </div>
+    </div>
+</div>
+<script>
+    var isSavePost = true;
+    function SavePost() {
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST", "/showSavePost", true);
+
+        ajax.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
+                console.log(response);
+                var html = "";
+				for (var a = 0; a < response.data.length; a++) {
+                    var data = response.data[a];
+                    html+='<div class="card padxx col-md-12">';
+                        html+='<div class="card-body">'
+                            html+='<a style="text-decoration: none !important;" href="' + mainURL + "/post/" + data.postId + '">'
+                                html+='<div class="row">'
+                                    html+='<div class="col-md-2">'
+                                        html+='<img src="' + mainURL + "/" + data.image + '" style="width: 125px; height: 125px;" alt="">'
+                                    html+=' </div>'
+                                    html+=' <div class="col-md-10">'
+                                        html+='<span class="text-default">'
+                                            html+= data.user.name
+                                        html+='</span>'
+                                        html+='<br>'
+                                        html+='<span class="text-default">'
+                                            html+=data.caption
+                                        html+='</span>'
+                                        html+='<small class="text-muted mt-1 description">'
+                                            html+=data.content
+                                        html+='</small>'
+                                    html+=' </div>'
+                                html+=' </div>'
+                            html+='</a>'
+                        html+=' </div>'
+                    html+=' </div>'           
+                }
+                document.getElementById('allSaved').innerHTML = html;
+            }
+        };
+
+        var formData = new FormData();
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        ajax.send(formData);
+    }
+
+</script>
+<%- include ("includes/footer") %>
