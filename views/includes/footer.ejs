@@ -45,82 +45,35 @@
             <span>© Copyright 2020 | Designed by: <a href="https://www.facebook.com/profile.php?id=100006647792868">NHT</a></span>
         </div>
     </div>
+    <button class="scrollToTopBtn">☝️</button>
 </footer>
 
+<script>
+    var istoTop = true;
+    function toTop(){
+        var scrollToTopBtn = document.querySelector(".scrollToTopBtn")
+        var rootElement = document.documentElement
 
-<!-- <script>
-    window.user = null;
-    var socketIO = io("http://localhost:3000");
-    function getUser(){
-        if(localStorage.getItem("acceccToken")){
-            var ajax= new XMLHttpRequest();
-            ajax.open("POST", "/getUser");
-
-            ajax.onreadystatechange = function(){
-                if(this.readyState == 4 && this.status ==200){
-                    var reponse = JSON.parse(this.responseText);
-
-                    if(reponse.status =="success"){
-                        window.user = reponse.data;
-
-                        if(typeof isUpdateProfile !=="undefined" && isUpdateProfile){
-                            showProfileData();
-                        }
-
-                    }
-                    else{
-                        localStorage.removeItem("accessToken");
-                    }
-                    showMainMenu();
-                }
-                
-            };
-            var formData = new FormData();
-            formData.append("accessToken", localStorage.getItem("accessToken"));
-            ajax.send(formData);
+        function handleScroll() {
+        // Do something on scroll
+        var scrollTotal = rootElement.scrollHeight - rootElement.clientHeight
+        if ((rootElement.scrollTop / scrollTotal ) > 0.15) {
+            // Show button
+            scrollToTopBtn.classList.add("showBtn")
+        } else {
+            // Hide button
+            scrollToTopBtn.classList.remove("showBtn")
         }
-        else{
-            showMainMenu();
         }
+
+        function scrollToTop() {
+        // Scroll to top logic
+        rootElement.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        })
+        }
+        scrollToTopBtn.addEventListener("click", scrollToTop)
+        document.addEventListener("scroll", handleScroll)
     }
-    function showMainMenu(){
-        var html ="";
-        if(localStorage.getItem("accessToken")){
-            html +='<li>';
-            html +='<a href="/pages">Pages</a>'
-            html +='</li>'
-
-            html +='<li>';
-            html +='<a href="/groups">Group</a>'
-            html +='</li>'
-
-            html +='<li>';
-            html +='<a href="/updateProfile">Update Profile</a>'
-            html +='</li>'
-            html +='<li>';
-            html +='<a href="/logout" onclick="return doLogout();">Log Out</a>'
-            html +='</li>'
-        }
-        else{
-            html +='<li>';
-            html +='<a href="/login">LogIn</a>'
-            html +='</li>'
-
-            html +='<li>';
-            html +='<a href="/signup">Signup</a>'
-            html +='</li>'
-        }
-        document.getElementById("main-menu").innerHTML =html;
-
-    }
-    function doLogout(){
-        localStorage.removeItem("accessToken");
-        return true;
-    }
-    window.onload =function(){
-        getUser();
-    };
-    window.onerror = function(file, line, error){
-        alert(file + " " + line + " " + error);
-    };
-</script> -->
+</script>

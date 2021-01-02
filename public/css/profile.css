@@ -148,6 +148,7 @@ li .suggest.active{
 
 .card{
     padding: 0;
+    min-width: 628px !important;
 }
 .card-img, .card-img-top {
     border-radius: 0;

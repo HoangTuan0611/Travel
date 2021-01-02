@@ -1,428 +1,499 @@
 <html>
 
-<head>
-	<title>Travel</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="/public/css/header.css">
-	<link rel="stylesheet" type="text/css" href="/public/css/main.css">
-	<script src="/public/js/socket.io.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-	<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600;700&display=swap" rel="stylesheet">
-	<link href="/public/plugin/fontawesome-free-5.15.1-web/css/all.css" rel="stylesheet"> <!--load all styles -->
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-</head>
-<body>
-	<header class="header custom-header">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-1 col-md-2 hidden-xs">
-					<a href="/">
-						<img class="img-logo" src="/public/img/logo.png" alt="">
-					</a>
-				</div>
-				<div class="col-md-7 col-lg-8">
-					<div class="row form-group input-location">
-						<div class="col-md-3 col-lg-2 col-4" style="border-right: 1px solid #ececec;">
-							<div class="location">
-								Đà lạt
+	<head>
+		<title>Travel</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="/public/css/header.css">
+		<link rel="stylesheet" type="text/css" href="/public/css/main.css">
+		<script src="/public/js/socket.io.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+		<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600;700&display=swap" rel="stylesheet">
+		<link href="/public/plugin/fontawesome-free-5.15.1-web/css/all.css" rel="stylesheet"> <!--load all styles -->
+		<script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	</head>
+	<body>
+		<header class="header custom-header">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-1 col-md-2 hidden-xs">
+						<a href="/">
+							<img class="img-logo" src="/public/img/logo.png" alt="">
+						</a>
+					</div>
+					<div class="col-md-7 col-lg-8">
+						<div class="row form-group input-location">
+							<div class="col-md-3 col-lg-2 col-4" style="border-right: 1px solid #ececec;">
+								<div class="location">
+									Đà lạt
+								</div>
+							</div>
+							<div class="col-md-9 col-lg-10 col-8">
+								<form onsubmit="return false;" class="row form-search">
+				
+										
+										<input class="col-md-10 form-control-custom" type="type" placeholder="Search Friend">
+																
+										<button class="col-md-2 buttonsearch" data-ripple type="button" onclick="onSearch(this);">
+											<i class="fas fa-search"></i>
+										</button>
+									
+								</form>
 							</div>
 						</div>
-						<div class="col-md-9 col-lg-10 col-8">
-							<form onsubmit="return false;" class="row form-search">
-			
-									
-									<input class="col-md-10 form-control-custom" type="type" placeholder="Search Friend">
-															
-									<button class="col-md-2 buttonsearch" data-ripple type="button" onclick="onSearch(this);">
-										<i class="fas fa-search"></i>
-									</button>
-								
-							</form>
-						</div>
+					</div>
+					<div class="col-md-3 col-lg-3 main-menu hidden-xs" id="main-menu">
 					</div>
 				</div>
-				<div class="col-md-3 col-lg-3 main-menu hidden-xs" id="main-menu">
-				</div>
 			</div>
-		</div>
-	</header>
-	<script>
-		var mainURL = "http://localhost:3000";
-		var socketIO = io("http://localhost:3000");
-		var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		</header>
+		<script>
+			var mainURL = "http://localhost:3000";
+			var socketIO = io("http://localhost:3000");
+			var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-		function onSearch(button) {
-			window.location.href = "/search/" + button.previousElementSibling.value;
-		}
-
-		function createLikesSection(data) {
-			var isLiked = false;
-			for (var b = 0; b < data.likers.length; b++) {
-				var liker = data.likers[b];
-				if (liker._id == window.user._id) {
-					isLiked = true;
-					break;
-				}
+			function onSearch(button) {
+				window.location.href = "/search/" + button.previousElementSibling.value;
 			}
-			var html = "";
-			html += '<div class="we-video-info">';
-				html += '<ul class="row">';
 
-					html += '<li class="col-md-4">';
-
-						var className = "";
-						if (isLiked) {
-							className = "like";
-						} else {
-							className = "none";
-						}
-
-						html += '<span class="' + className + '" onclick="toggleLikePost(this);" data-id="' + data._id + '">';
-							html += '<i class="far fa-thumbs-up" style="padding-right:5px;"></i>';
-							html += '<span>' + data.likers.length + '</span>';
-						html += '</span>';
-
-					html += '</li>';
-
-					html += '<li class="col-md-4">';
-						html += '<span class="comment" title="Comments">';
-							html += '<i class="far fa-comment" style="padding-right:5px;"></i>';
-							html += '<span id="count-post-comments-' + data._id + '">' + data.comments.length + '</span>';
-						html += '</span>';
-					html += '</li>';
-
-					html += '<li class="col-md-4" style="margin-top: 4px; padding-right: 35px;">';
-						html += '<span style="float:right;" class="share" onclick="sharePost(this);" data-image="' + data.image + '" ; data-content="' + data.content + '" ; data-caption="' + data.caption + '"; data-id="' + data._id + '">';
-							html += '<i class="far fa-bookmark"></i>';
-						html += '</span>';
-					html += '</li>';
-
-				html += '</ul>';
-			html += '</div>';
-
-			return html;
-		}
-
-		function sharePost(self) {
-			var _id = self.getAttribute("data-id");
-			var caption = self.getAttribute("data-caption");
-			var content = self.getAttribute("data-content");
-			var image = self.getAttribute("data-image");
-			var ajax = new XMLHttpRequest();
-			ajax.open("POST", "/savePost", true);
-
-			ajax.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-
-					var response = JSON.parse(this.responseText);
-
-					if (response.status == "success") {
-						Swal.fire({
-							title: 'Congratulations!',
-							text: 'Bài viết đã được lưu!',
-							icon: 'success',
-							timer: 2500
-						});
-						// showNewsfeed();
+			function createLikesSection(data) {
+				var isLiked = false;
+				for (var b = 0; b < data.likers.length; b++) {
+					var liker = data.likers[b];
+					if (liker._id == window.user._id) {
+						isLiked = true;
+						break;
 					}
 				}
-			};
+				var html = "";
+				html += '<div class="we-video-info">';
+					html += '<ul class="row">';
 
-			var formData = new FormData();
-			formData.append("accessToken", localStorage.getItem("accessToken"));
-			formData.append("_id", _id);
-			formData.append("caption", caption);
-			formData.append("content", content);
-			formData.append("image", image);
-			console.log(caption);
-			console.log(content);
-			console.log(image);
-			ajax.send(formData);
-			
-		}
+						html += '<li class="col-md-4">';
 
-		function toggleLikePost(self) {
-			var _id = self.getAttribute("data-id");
+							var className = "";
+							if (isLiked) {
+								className = "like";
+							} else {
+								className = "none";
+							}
 
-			var ajax = new XMLHttpRequest();
-			ajax.open("POST", "/toggleLikePost", true);
+							html += '<span class="' + className + '" onclick="toggleLikePost(this);" data-id="' + data._id + '">';
+								html += '<i class="far fa-thumbs-up" style="padding-right:5px;"></i>';
+								html += '<span>' + data.likers.length + '</span>';
+							html += '</span>';
 
-			ajax.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
+						html += '</li>';
 
-					var response = JSON.parse(this.responseText);
+						html += '<li class="col-md-4">';
+							html += '<span class="comment" title="Comments">';
+								html += '<i class="far fa-comment" style="padding-right:5px;"></i>';
+								html += '<span id="count-post-comments-' + data._id + '">' + data.comments.length + '</span>';
+							html += '</span>';
+						html += '</li>';
 
-					if (response.status == "success") {
-						self.className = "like";
+						html += '<li class="col-md-4" style="margin-top: 4px; padding-right: 35px;">';
+							html += '<span style="float:right;" class="share" onclick="sharePost(this);" data-image="' + data.image + '" ; data-content="' + data.content + '" ; data-caption="' + data.caption + '"; data-id="' + data._id + '">';
+								html += '<i class="far fa-bookmark"></i>';
+							html += '</span>';
+						html += '</li>';
 
-						var likes = parseInt(self.querySelector("span").innerHTML);
-						likes++;
-						self.querySelector("span").innerHTML = likes;
-					}
-					if (response.status == "unliked") {
-						self.className = "none";
+					html += '</ul>';
+				html += '</div>';
 
-						var likes = parseInt(self.querySelector("span").innerHTML);
-						likes--;
-						self.querySelector("span").innerHTML = likes;
-					}
-					if (response.status == "error") {
-						alert(response.message);
-					}
-				}
-			};
-
-			var formData = new FormData();
-			formData.append("accessToken", localStorage.getItem("accessToken"));
-			formData.append("_id", _id);
-			ajax.send(formData);
-		}
-
-		function createCommentsSection(data) {
-			var html = "";
-				html+='<div class="col-md-12">';  
-					data.comments = data.comments.reverse();
-					for (var b = 0; b < data.comments.length; b++) {
-						var comment = data.comments[b];
-
-						html += '<div class="row">';
-							html += '<span class="user"><a href="/">' + comment.user.name + '</a></span>';
-							// var createdAt = new Date(comment.createdAt);
-							// var date = createdAt.getDate() + "";
-							// date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
-							// html += '<span>' + date + '</span>';
-							
-							html += '<span class="description col-lg-9">' + comment.comment + '</span>';     
-							html += '<a style="text-decoration: none;" class="col-lg-3 replycmt" href="javascript:void(0);" data-post-id="' + data._id + '" data-comment-id="' + comment._id + '" onclick="prepareToReply(this);" title="Reply">Reply</a>';
-							// 
-							
-							html += '<ul>';
-								comment.replies = comment.replies.reverse();
-								for (var c = 0; c < comment.replies.length; c++) {
-									var reply = comment.replies[c];
-									html += '<li>';
-										html += '<span class="user"><a href="/">' + reply.user.name + '</a></span>';
-										html += '<span class="description col-lg-9">' + reply.reply + '</span>';
-									html += '</li>';
-								}
-							html += '</ul>';
-
-						html += '</div>';
-					}
-					html += '<form method="post" onsubmit="return doPostComment(this);">';
-						html+='<div class="row">';
-							html+='<div class="comment col-md-10">';
-								html += '<input type="hidden" name="_id" value="' + data._id + '">';
-								html+='<input type="text" name="comment" class="input-field" placeholder="Viết bình luận">';
-							html+='</div>';
-							html+='<div class="col-md-2">';
-								html += '<button class="postcmt" type="submit">Post</button>';
-							html+='</div>';
-						html+='</div>';
-					html += '</form>';
-				html+='</div>';
-			return html;
-		}
-
-		function doPostComment(form) {
-
-			var ajax = new XMLHttpRequest();
-			ajax.open("POST", "/postComment", true);
-
-			ajax.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-
-					var response = JSON.parse(this.responseText);
-					alert(response.message);
-
-					if (response.status == "success") {
-						form.comment.value = "";
-
-						var commentsHtml = createCommentsSection(response.updatePost);
-						document.getElementById("post-comments-" + form._id.value).innerHTML = commentsHtml;
-
-						var comments = parseInt(document.getElementById("count-post-comments-" + form._id.value).innerHTML);
-						comments++;
-						document.getElementById("count-post-comments-" + form._id.value).innerHTML = comments;
-					}
-				}
-			};
-
-			var formData = new FormData(form);
-			formData.append("accessToken", localStorage.getItem("accessToken"));
-			ajax.send(formData);
-
-			return false;
-		}
-
-		function prepareToReply(self) {
-			$("#replyModal input[name='postId']").val(self.getAttribute("data-post-id"));
-			$("#replyModal input[name='commentId']").val(self.getAttribute("data-comment-id"));
-			$("#replyModal").modal("show");
-		}
-
-		function doPostReply(form) {
-			var ajax = new XMLHttpRequest();
-			ajax.open("POST", "/postReply", true);
-
-			ajax.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-
-					var response = JSON.parse(this.responseText);
-					alert(response.message);
-
-					if (response.status == "success") {
-						form.reply.value = "";
-						$("#replyModal").modal("hide");
-
-						var commentsHtml = createCommentsSection(response.updatePost);
-						document.getElementById("post-comments-" + form.postId.value).innerHTML = commentsHtml;
-					}
-				}
-			};
-
-			var formData = new FormData(form);
-			formData.append("accessToken", localStorage.getItem("accessToken"));
-			ajax.send(formData);
-
-			return false;
-		}
-
-		function previewPostImage(self) {
-			var file = self.files;
-			if (file.length > 0) {
-				var fileReader = new FileReader();
-
-				fileReader.onload = function (event) {
-					document.getElementById("post-img-preview").style.display = "";
-					document.getElementById("post-img-preview").setAttribute("src", event.target.result);
-				};
-
-				fileReader.readAsDataURL(file[0]);
+				return html;
 			}
-		}
 
-		function previewPostVideo(self) {
-			var file = self.files;
-			if (file.length > 0) {
-				var fileReader = new FileReader();
+			function sharePost(self) {
+				var _id = self.getAttribute("data-id");
+				var caption = self.getAttribute("data-caption");
+				var content = self.getAttribute("data-content");
+				var image = self.getAttribute("data-image");
+				var ajax = new XMLHttpRequest();
+				ajax.open("POST", "/savePost", true);
 
-				fileReader.onload = function (event) {
-					document.getElementById("post-video-preview").style.display = "";
-					document.getElementById("post-video-preview").setAttribute("src", event.target.result);
-				};
+				ajax.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
 
-				fileReader.readAsDataURL(file[0]);
-			}
-		}
-		//
-
-		window.user = null;
-		function getUser(){
-			if(localStorage.getItem("accessToken")){
-				var ajax= new XMLHttpRequest();
-				ajax.open("POST", "/getUser", true);
-
-				ajax.onreadystatechange = function(){
-					if(this.readyState == 4 && this.status ==200){
 						var response = JSON.parse(this.responseText);
-						// console.log(response);
-						if(response.status =="success"){
-							window.user = response.data;
-							if(typeof isUpdateProfile !=="undefined" && isUpdateProfile){
-								showProfileData();
-							}
-							if (typeof isHomePage !== "undefined" && isHomePage) {
-								showNewsfeed();
-							}
-							if (typeof isSearchResults !== "undefined" && isSearchResults) {
-								showSearchResults();
-							}
-							if (typeof isFriends !== "undefined" && isFriends) {
-								showFriends();
-							}
-							if (typeof isGroups !== "undefined" && isGroups){
-								getGroups();
-							}
-							if (typeof isGroupDetail !== "undefined" && isGroupDetail){
-								getGroupDetail();
-							}
-							if (typeof isMember !== "undefined" && isMember){
-								showisMember();
-							}
-							if (typeof isNotifications !== "undefined" && isNotifications){
-								showNotifications();
-							}
-							if (typeof isPostDetail !== "undefined" && isPostDetail){
-								showPostDetails();
-							}
-							if (typeof isAll !== "undefined" && isAll){
-								showAll();
-							}
-							if (typeof isSavePost !== "undefined" && isSavePost){
-								SavePost();
-							}
+
+						if (response.status == "success") {
+							Swal.fire({
+								title: 'Congratulations!',
+								text: 'Bài viết đã được lưu!',
+								icon: 'success',
+								timer: 2500
+							});
+							// showNewsfeed();
 						}
-						else{
-							localStorage.removeItem("accessToken");
-						}
-						showMainMenu();
 					}
-					
 				};
+
 				var formData = new FormData();
 				formData.append("accessToken", localStorage.getItem("accessToken"));
+				formData.append("_id", _id);
+				formData.append("caption", caption);
+				formData.append("content", content);
+				formData.append("image", image);
+				console.log(caption);
+				console.log(content);
+				console.log(image);
+				ajax.send(formData);
+				
+			}
+
+			function toggleLikePost(self) {
+				var _id = self.getAttribute("data-id");
+
+				var ajax = new XMLHttpRequest();
+				ajax.open("POST", "/toggleLikePost", true);
+
+				ajax.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+
+						var response = JSON.parse(this.responseText);
+
+						if (response.status == "success") {
+							self.className = "like";
+
+							var likes = parseInt(self.querySelector("span").innerHTML);
+							likes++;
+							self.querySelector("span").innerHTML = likes;
+						}
+						if (response.status == "unliked") {
+							self.className = "none";
+
+							var likes = parseInt(self.querySelector("span").innerHTML);
+							likes--;
+							self.querySelector("span").innerHTML = likes;
+						}
+						if (response.status == "error") {
+							alert(response.message);
+						}
+					}
+				};
+
+				var formData = new FormData();
+				formData.append("accessToken", localStorage.getItem("accessToken"));
+				formData.append("_id", _id);
 				ajax.send(formData);
 			}
-			else{
-				showMainMenu();
+
+			function createCommentsSection(data) {
+				var html = "";
+					html+='<div class="col-md-12">';  
+						data.comments = data.comments.reverse();
+						for (var b = 0; b < data.comments.length; b++) {
+							var comment = data.comments[b];
+
+							html += '<div class="row">';
+								html += '<span class="user"><a href="' + mainURL + "/user/" + comment.user.username + '">' + comment.user.name + '</a></span>';
+								// var createdAt = new Date(comment.createdAt);
+								// var date = createdAt.getDate() + "";
+								// date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
+								// html += '<span>' + date + '</span>';
+								
+								html += '<span class="description col-lg-9">' + comment.comment + '</span>';     
+								html += '<a style="text-decoration: none;" class="col-lg-3 replycmt" href="javascript:void(0);" data-post-id="' + data._id + '" data-comment-id="' + comment._id + '" onclick="prepareToReply(this);" title="Reply">Reply</a>';
+								// 
+								
+								html += '<ul>';
+									comment.replies = comment.replies.reverse();
+									for (var c = 0; c < comment.replies.length; c++) {
+										var reply = comment.replies[c];
+										html += '<li>';
+											html += '<span class="user"><a href="' + mainURL + "/user/" + reply.user.username + '">' + reply.user.name + '</a></span>';
+											html += '<span class="description col-lg-9">' + reply.reply + '</span>';
+										html += '</li>';
+									}
+								html += '</ul>';
+
+							html += '</div>';
+						}
+						html += '<form method="post" onsubmit="return doPostComment(this);">';
+							html+='<div class="row">';
+								html+='<div class="comment col-md-10">';
+									html += '<input type="hidden" name="_id" value="' + data._id + '">';
+									html+='<input type="text" name="comment" class="input-field" placeholder="Viết bình luận">';
+								html+='</div>';
+								html+='<div class="col-md-2">';
+									html += '<button class="postcmt" type="submit">Post</button>';
+								html+='</div>';
+							html+='</div>';
+						html += '</form>';
+					html+='</div>';
+				return html;
 			}
-		}
-		function showMainMenu(){
-			var html ="";
-			if(localStorage.getItem("accessToken")){
-				html +='<a href="/notifications"><i style="font-size:30px; padding-left:50px; padding-top:5px; color:#6c757d; cursor:pointer;" class="far fa-bell"></i></a>';
-				html +='<div class="dropdown show" style="float: left;">';
-				html +='<span style="background-image: url(/public/img/dalat.jpeg)" class="avatar dropdown a-custom-header dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
-				html +='</span>';
-				html +='<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">';
-				html +='<a class="dropdown-item" href="/profile">Thông tin tài khoản</a>';
-				// html +='<a class="dropdown-item" href="/tour">Quản lý lịch trình</a>';
-				html +='<a class="dropdown-item" href="/postsaved">Bài viết đã lưu</a>';
-				html +='<a class="dropdown-item" onclick="return doLogout();" href="/logout">Đăng xuất</a>';
-				html +='</div>';
-				html +='</div>';
-				html +='<a style="float: right;" class="a-custom-header" href="/blog">';
-				html +='<button class="button button-custom">'
-				html +='Viết bài'
-				html +='</button>';
-				html +='</a>'
+
+			function doPostComment(form) {
+
+				var ajax = new XMLHttpRequest();
+				ajax.open("POST", "/postComment", true);
+
+				ajax.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+
+						var response = JSON.parse(this.responseText);
+						alert(response.message);
+
+						if (response.status == "success") {
+							form.comment.value = "";
+
+							var commentsHtml = createCommentsSection(response.updatePost);
+							document.getElementById("post-comments-" + form._id.value).innerHTML = commentsHtml;
+
+							var comments = parseInt(document.getElementById("count-post-comments-" + form._id.value).innerHTML);
+							comments++;
+							document.getElementById("count-post-comments-" + form._id.value).innerHTML = comments;
+						}
+					}
+				};
+
+				var formData = new FormData(form);
+				formData.append("accessToken", localStorage.getItem("accessToken"));
+				ajax.send(formData);
+
+				return false;
 			}
-			else{
-				html +='<a href="/notifications"><i style="font-size:30px; padding-left:50px; padding-top:5px; color:#6c757d; cursor:pointer;" class="far fa-bell"></i></a>';
-				html +='<a style="float: right;" class="a-custom-header" href="/login">';
-				html +='<button class="button button-custom">'
-				html +='Đăng nhập'
-				html +='</button>';
-				html +='</a>'
+
+			function prepareToReply(self) {
+				$("#replyModal input[name='postId']").val(self.getAttribute("data-post-id"));
+				$("#replyModal input[name='commentId']").val(self.getAttribute("data-comment-id"));
+				$("#replyModal").modal("show");
 			}
-			document.getElementById("main-menu").innerHTML =html;
-		}
-		//	
-		function doLogout(){
-			localStorage.removeItem("accessToken");
-			return true;
-		}
-		window.onload =function(){
-			getUser();
-    	};
-		window.onerror = function(file, line, error){
-			alert(file + " " + line + " " + error);
-		};
-	</script>
+
+			function prepareToCreateTour() {
+				$("#createTour").modal("show");
+
+				var currentTab = 0; // Current tab is set to be the first tab (0)
+				showTab(currentTab); // Display the current tab
+
+				function showTab(n) {
+					// This function will display the specified tab of the form...
+					var x = document.getElementsByClassName("tab");
+					x[n].style.display = "block";
+					//... and fix the Previous/Next buttons:
+					if (n == 0) {
+						document.getElementById("prevBtn").style.display = "none";
+					} else {
+						document.getElementById("prevBtn").style.display = "inline";
+					}
+					if (n == (x.length - 1)) {
+						document.getElementById("nextBtn").innerHTML = "Hoàn thành";
+					} else {
+						// $('#nextBtn').attr("type", "button");
+						document.getElementById("nextBtn").innerHTML = "Tiếp theo";
+					}
+					//... and run a function that will display the correct step indicator:
+					fixStepIndicator(n)
+				}
+			}
+
+			function prepareToCreateNote(){
+				$("#createNote").modal("show");
+			}
+
+			function prepareToCreateTourDetail(){
+				$("#createTourDetail").modal("show");
+			}
+
+			function showTab(n) {
+				// This function will display the specified tab of the form...
+				var x = document.getElementsByClassName("tab");
+				x[n].style.display = "block";
+				//... and fix the Previous/Next buttons:
+				if (n == 0) {
+					document.getElementById("prevBtn").style.display = "none";
+				} else {
+					document.getElementById("prevBtn").style.display = "inline";
+				}
+				if (n == (x.length - 1)) {
+					document.getElementById("nextBtn").innerHTML = "Hoàn thành";
+				} 
+				else {
+					$('#nextBtn').attr("type", "button");
+				}
+				//... and run a function that will display the correct step indicator:
+				fixStepIndicator(n)
+			}
+
+			function doPostReply(form) {
+				var ajax = new XMLHttpRequest();
+				ajax.open("POST", "/postReply", true);
+
+				ajax.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+
+						var response = JSON.parse(this.responseText);
+						alert(response.message);
+
+						if (response.status == "success") {
+							form.reply.value = "";
+							$("#replyModal").modal("hide");
+
+							var commentsHtml = createCommentsSection(response.updatePost);
+							document.getElementById("post-comments-" + form.postId.value).innerHTML = commentsHtml;
+						}
+					}
+				};
+
+				var formData = new FormData(form);
+				formData.append("accessToken", localStorage.getItem("accessToken"));
+				ajax.send(formData);
+
+				return false;
+			}
+
+			function previewPostImage(self) {
+				var file = self.files;
+				if (file.length > 0) {
+					var fileReader = new FileReader();
+
+					fileReader.onload = function (event) {
+						document.getElementById("post-img-preview").style.display = "";
+						document.getElementById("post-img-preview").setAttribute("src", event.target.result);
+					};
+
+					fileReader.readAsDataURL(file[0]);
+				}
+			}
+
+			function previewPostVideo(self) {
+				var file = self.files;
+				if (file.length > 0) {
+					var fileReader = new FileReader();
+
+					fileReader.onload = function (event) {
+						document.getElementById("post-video-preview").style.display = "";
+						document.getElementById("post-video-preview").setAttribute("src", event.target.result);
+					};
+
+					fileReader.readAsDataURL(file[0]);
+				}
+			}
+			//
+
+			window.user = null;
+			function getUser(){
+				if(localStorage.getItem("accessToken")){
+					var ajax= new XMLHttpRequest();
+					ajax.open("POST", "/getUser", true);
+
+					ajax.onreadystatechange = function(){
+						if(this.readyState == 4 && this.status ==200){
+							var response = JSON.parse(this.responseText);
+							// console.log(response);
+							if(response.status =="success"){
+								window.user = response.data;
+								if(typeof isUpdateProfile !=="undefined" && isUpdateProfile){
+									showProfileData();
+								}
+								if (typeof isHomePage !== "undefined" && isHomePage) {
+									showNewsfeed();
+								}
+								if (typeof isSearchResults !== "undefined" && isSearchResults) {
+									showSearchResults();
+								}
+								if (typeof isFriends !== "undefined" && isFriends) {
+									showFriends();
+								}
+								if (typeof isGroups !== "undefined" && isGroups){
+									getGroups();
+								}
+								if (typeof isGroupDetail !== "undefined" && isGroupDetail){
+									getGroupDetail();
+								}
+								if (typeof isMember !== "undefined" && isMember){
+									showisMember();
+								}
+								if (typeof isNotifications !== "undefined" && isNotifications){
+									showNotifications();
+								}
+								if (typeof isPostDetail !== "undefined" && isPostDetail){
+									showPostDetails();
+								}
+								if (typeof isAll !== "undefined" && isAll){
+									showAll();
+								}
+								if (typeof isSavePost !== "undefined" && isSavePost){
+									SavePost();
+								}
+								if (typeof isUserProfile !== "undefined" && isUserProfile){
+									showUserProfile();
+								}
+								if (typeof isTours !== "undefined" && isTours){
+									getTours();
+								}
+								if (typeof isshowtour !== "undefined" && isshowtour){
+									showTourDetail();
+								}
+								if (typeof istoTop !== "undefined" && istoTop){
+									toTop();
+								}
+								if (typeof isAllShowTour !== "undefined" && isAllShowTour){
+									showAllTour();
+								}
+							}
+							else{
+								localStorage.removeItem("accessToken");
+							}
+							showMainMenu();
+						}
+						
+					};
+					var formData = new FormData();
+					formData.append("accessToken", localStorage.getItem("accessToken"));
+					ajax.send(formData);
+				}
+				else{
+					showMainMenu();
+				}
+			}
+			
+			function showMainMenu(){
+				var html ="";
+				if(localStorage.getItem("accessToken")){
+					html +='<a href="/notifications"><i style="font-size:30px; padding-left:50px; padding-top:5px; color:#6c757d; cursor:pointer;" class="far fa-bell"></i></a>';
+					html +='<div class="dropdown show" style="float: left;">';
+					html +='<span style="background-image: url(/public/img/dalat.jpeg)" class="avatar dropdown a-custom-header dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+					html +='</span>';
+					html +='<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">';
+					html +='<a class="dropdown-item" href="/profile">Thông tin tài khoản</a>';
+					html +='<a class="dropdown-item" href="/tour">Quản lý lịch trình</a>';
+					html +='<a class="dropdown-item" href="/postsaved">Bài viết đã lưu</a>';
+					html +='<a class="dropdown-item" onclick="return doLogout();" href="/logout">Đăng xuất</a>';
+					html +='</div>';
+					html +='</div>';
+					html +='<a style="float: right;" class="a-custom-header" href="/blog">';
+					html +='<button class="button button-custom">'
+					html +='Viết bài'
+					html +='</button>';
+					html +='</a>'
+				}
+				else{
+					html +='<a href="/notifications"><i style="font-size:30px; padding-left:50px; padding-top:5px; color:#6c757d; cursor:pointer;" class="far fa-bell"></i></a>';
+					html +='<a style="float: right;" class="a-custom-header" href="/login">';
+					html +='<button class="button button-custom">'
+					html +='Đăng nhập'
+					html +='</button>';
+					html +='</a>'
+				}
+				document.getElementById("main-menu").innerHTML =html;
+			}
+			//	
+			function doLogout(){
+				localStorage.removeItem("accessToken");
+				return true;
+			}
+			window.onload =function(){
+				getUser();
+			};
+			window.onerror = function(file, line, error){
+				alert(file + " " + line + " " + error);
+			};
+		</script>
 	</body>
 </html>

@@ -25,7 +25,7 @@ var users = [];
 var mainURL = "http://localhost:3000";
 
 socketIO.on("connection", function (socket) {
-	console.log("User connected", socket.id);
+	// console.log("User connected", socket.id);
 	socketID = socket.id;
 });
 
@@ -52,7 +52,7 @@ http.listen(3000, function () {
 					result.render("userProfile", {
 						"user": user
 					});
-					console.log(user);
+					// console.log(user);
 				}
 			});
 		});
@@ -95,22 +95,7 @@ http.listen(3000, function () {
 		app.get("/friends",function(request,result){
 			result.render("friends");
 		});
-		app.get("/post/:id", function (request, result) {
-			database.collection("posts").findOne({
-				"_id": ObjectId(request.params.id)
-			}, function (error, post) {
-				if (post == null) {
-					result.send({
-						"status": "error",
-						"message": "Post does not exist."
-					});
-				} else {
-					result.render("postDetail", {
-						"post": post
-					});
-				}
-			});
-		});
+
 
 		// Api post 
 		app.post("/login", function (request, result) {
@@ -250,143 +235,6 @@ http.listen(3000, function () {
 							"message": "Profile has been updated."
 						});
 					});
-				}
-			});
-		});
-		app.post("/addPost", function (request, result) {
-
-			var accessToken = request.fields.accessToken;
-			var caption = request.fields.caption;
-			var content = request.fields.content;
-			var image = "";
-			var video = "";
-			var type = request.fields.type;
-			var createdAt = new Date().getTime();
-			var _id = request.fields._id;
-
-			database.collection("users").findOne({
-				"accessToken": accessToken
-			}, function (error, user) {
-				if (user == null) {
-					result.json({
-						"status": "error",
-						"message": "User has been logged out. Please login again."
-					});
-				} else {
-
-					if (request.files.image.size > 0 && request.files.image.type.includes("image")) {
-						image = "public/images/" + new Date().getTime() + "-" + request.files.image.name;
-						fileSystem.rename(request.files.image.path, image, function (error) {
-							//
-						});
-					}
-
-					if (request.files.video.size > 0 && request.files.video.type.includes("video")) {
-						video = "public/videos/" + new Date().getTime() + "-" + request.files.video.name;
-						fileSystem.rename(request.files.video.path, video, function (error) {
-							//
-						});
-					}
-					if(type=="group_post"){
-						database.collection("groups").findOne({
-							"_id": ObjectId(_id)
-						}, function(error,group){
-							if (group==null){
-								result.json({
-									"status":"error",
-									"message": "Group does not exist."
-								});
-								return;
-							} else {
-								var isMember = false;
-								for (var a=0;a<group.members.length;a++){
-									var member = group.members[a];
-									console.log(member);
-									if(member._id.toString()==user._id.toString()){
-										isMember =true;
-										break;
-									}
-								}
-								if (!isMember) {
-									result.json({
-										"status":"error",
-										"message":"Sorry, you are not a member of this group."
-									});
-									return;
-								}
-								database.collection("posts").insertOne({
-									"caption":caption,
-									"content": content,
-									"image":image,
-									"video":video,
-									"type": type,
-									"createdAt": createdAt,
-									"likers":[],
-									"comments":[],
-									"shares":[],
-									"user":{
-										"_id":group._id,
-										"name":group.name,
-										"profileImage": group.coverPhoto
-									},
-									"uploader": {
-										"_id":user._id,
-										"name":user.name,
-										"profileImage":user.profileImage
-									}
-								}, function(error,data){
-									result.json({
-										"status":"success",
-										"message":"Post has been uploaded"
-									});
-								});
-							}
-						 });
-					}
-					else{
-						database.collection("posts").insertOne({
-							"caption": caption,
-							"content": content,
-							"image": image,
-							"video": video,
-							"type": type,
-							"createdAt": createdAt,
-							"likers": [],
-							"comments": [],
-							"shares": [],
-							"user": {
-								"_id": user._id,
-								"name": user.name,
-								"username": user.username,
-								"profileImage": user.profileImage
-							}
-						}, function (error, data) {
-							database.collection("users").updateOne({
-								"accessToken": accessToken
-							}, {
-								$push: {
-									"posts": {
-										"_id": data.insertedId,
-										"caption": caption,
-										"content": content,
-										"image": image,
-										"video": video,
-										"type": type,
-										"createdAt": createdAt,
-										"likers": [],
-										"comments": [],
-										"shares": []
-									}
-								}
-							}, function (error, data) {
-
-								result.json({
-									"status": "success",
-									"message": "Post has been uploaded."
-								});
-							});
-						});
-					}
 				}
 			});
 		});
@@ -733,8 +581,8 @@ http.listen(3000, function () {
 										}
 									});
 								}
-								console.log(post.user._id);
-								console.log(post._id);
+								// console.log(post.user._id);
+								// console.log(post._id);
 								database.collection("users").updateOne({
 									$and: [{
 										"_id": post.user._id
@@ -848,9 +696,9 @@ http.listen(3000, function () {
 								{
 									arrayFilters:[{'i._id' : ObjectId(commentId)}]
 								});
-								console.log(post.user._id);
-								console.log(post._id);
-								console.log(ObjectId(commentId));
+								// console.log(post.user._id);
+								// console.log(post._id);
+								// console.log(ObjectId(commentId));
 								database.collection("posts").findOne({
 									"_id": ObjectId(postId)
 								}, function (error, updatePost) {
@@ -983,6 +831,7 @@ http.listen(3000, function () {
 									"friends": {
 										"_id":me._id,
 										"name": me.name,
+										"username": me.username,
 										"profileImage":me.profileImage,
 										"status":"Pending",
 										"sentByMe": false,
@@ -997,6 +846,7 @@ http.listen(3000, function () {
 										"friends": {
 											"_id": user._id,
 											"name": user.name,
+											"username": user.username,
 											"profileImage": user.profileImage,
 											"status":"Pending",
 											"sentByMe":true,
@@ -1130,8 +980,8 @@ http.listen(3000, function () {
 								});
 							});
 						}
-						console.log(user._id);
-						console.log(me._id);
+						// console.log(user._id);
+						// console.log(me._id);
 					});
 				}
 			});
@@ -1144,7 +994,7 @@ http.listen(3000, function () {
 		});
 		app.post("/getFriendsChat",function(request,result){
 			var accessToken = request.fields.accessToken;
-			console.log(accessToken);
+			// console.log(accessToken);
 			var _id = request.fields._id;
 		
 			database.collection("users").findOne({
@@ -1456,22 +1306,6 @@ http.listen(3000, function () {
 								});
 								return;
 							} else {
-								var isMember = false;
-								for (var a=0;a<group.members.length;a++){
-									var member = group.members[a];
-		
-									if(member._id.toString()==user._id.toString()){
-										isMember =true;
-										break;
-									}
-								}
-								if (!isMember) {
-									result.json({
-										"status":"error",
-										"message":"Sorry, you are not a member of this group."
-									});
-									return;
-								}
 								database.collection("posts").insertOne({
 									"caption":caption,
 									"content": content,
@@ -1551,7 +1385,7 @@ http.listen(3000, function () {
 		app.post("/toggleJoinGroup", function (request,result){
 			var accessToken = request.fields.accessToken;
 			var _id = request.fields._id;
-			console.log(ObjectId(_id));
+			// console.log(ObjectId(_id));
 	
 			database.collection("users").findOne({
 				"accessToken": accessToken
@@ -1936,6 +1770,588 @@ http.listen(3000, function () {
 						result.json({
 							"status": "success",
 							"message": "Record has been fetched",
+							"data": data
+						});
+					});
+				}
+			});
+		});
+		// Tour
+		app.post("/createTour",function (request, result){
+			 
+			var accessToken = request.fields.accessToken;
+			var tenChuyenDi = request.fields.tenChuyenDi;
+			var diemBatDau = request.fields.diemBatDau;
+			var diemKetThuc = request.fields.diemKetThuc;
+			var thoiGianBatDau = request.fields.thoiGianBatDau;
+			var thoiGianKetThuc = request.fields.thoiGianKetThuc;
+			var phuongTien = request.fields.phuongTien;
+			var chiPhi = request.fields.chiPhi;
+			var soLuongThanhVien = request.fields.soLuongThanhVien;
+			var trangthai = "con_slot";
+
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function (error, user){
+				if (user == null) {
+					result.json({
+						"status":"error",
+						"message":"User has been logged out. Please login again."
+					});
+				} else {
+					database.collection("tours").insertOne({
+						"tenChuyenDi": tenChuyenDi,
+						"diemBatDau": diemBatDau,
+						"diemKetThuc": diemKetThuc,
+						"thoiGianBatDau": thoiGianBatDau,
+						"thoiGianKetThuc": thoiGianKetThuc,
+						"phuongTien": phuongTien,
+						"chiPhi":chiPhi,
+						"soLuongThanhVien": soLuongThanhVien,
+						"trangthai":trangthai,
+							
+						"members": [{
+							"_id": user._id,
+							"name": user.name,
+							"profileImage": user.profileImage,
+							"status":"Accepted"
+						}],
+						"user": {
+							"_id":user._id,
+							"name":user.name,
+							"profileImage":user.profileImage
+						}	
+					},function (error,data){
+						database.collection("users").updateOne({
+							"accessToken":accessToken
+						},{
+							$push:{
+								"tours":{
+									"_id":data.insertedId,
+									"status":"Accepted"
+								}
+							}
+						}, function (error, data){
+							result.json({
+								"status":"success",
+								"message":"Tour has been created."
+							});
+						});
+					});
+				} 
+			});				
+		});
+		app.post("/getTours",function (request, result){
+			var accessToken = request.fields.accessToken;
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function (error, user){
+				if (user == null) {
+					result.json({
+						"status":"error",
+						"message":"User has been logged out. Please login again."
+					});
+				} else{
+					database.collection("tours").find({
+						"trangthai": "con_slot"
+					}).toArray(function(error,data){
+						result.json({
+							"status":"success",
+							"message":"Record has been fetched.",
+							"data": data
+						});
+					});
+				}
+			});
+		});
+		app.get("/tour/:_id", function (request,result){
+			var _id = request.params._id;
+
+			database.collection("tours").findOne({
+				"_id": ObjectId(_id)
+			}, function(error, tour){
+				if (tour == null) {
+					result.json({
+						"status":"error",
+						"message":"Tour does not exist."
+					});
+				} else {
+					result.render("tourDetail",{
+						"tour": tour
+					});
+				}
+			});
+		});
+		app.get("/post/:id", function (request, result) {
+			database.collection("posts").findOne({
+				"_id": ObjectId(request.params.id)
+			}, function (error, post) {
+				if (post == null) {
+					result.send({
+						"status": "error",
+						"message": "Post does not exist."
+					});
+				} else {
+					result.render("postDetail", {
+						"post": post
+					});
+				}
+			});
+		});
+
+		app.post("/deletePost",function(request,result){
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+			console.log(_id);
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function (error, user) {
+				if (user == null) {
+					result.json({
+						"status": "error",
+						"message": "User has been logged out. Please login again."
+					});
+				} else {
+					database.collection("posts").findOne({
+						"_id": ObjectId(_id)
+					}, function(error,post){
+						if (post == null) {
+							result.json({
+								"status": "error",
+								"message": "Post does not exist"
+							});
+						} else if (post.type == "group_post"){
+							if(user._id.toString() == post.uploader._id.toString()){
+								database.collection("posts").deleteOne({
+									"_id":ObjectId(_id)
+								},function(error,data){
+									result.json({
+										"status": "success",
+										"message": "Post has been remove."
+									});
+								});						
+							}else {
+								result.json({
+									"status": "error",
+									"message": "You doesn't own post."
+								});
+							}
+						} else {
+							if(user._id.toString() == post.user._id.toString()){
+								database.collection("posts").deleteOne({
+									"_id":ObjectId(_id)
+								},function(error,data){
+									database.collection("users").updateOne({
+										"_id":user._id
+									},{
+										$pull:{
+											"_id": post._id,
+											"caption": post.caption,
+											"content": post.content,
+											"image": post.image,
+											"video": post.video,
+											"type": post.type,
+											"createdAt": post.createdAt,
+											"likers": post.likers,
+											"comments": post.comments,
+											"shares": post.shares
+										}
+									},function(error,data){
+										result.json({
+											"status": "success",
+											"message": "Post has been remove."
+										});
+									});
+								});						
+							}else {
+								result.json({
+									"status": "error",
+									"message": "You doesn't own post."
+								});
+							}			
+						}
+					});
+				}
+			});
+		});
+		app.post("/getMyTour",function(request,result){
+			var accessToken = request.fields.accessToken;
+			database.collection("users").findOne({
+				"accessToken":accessToken
+			},function(error,user){
+				if(user==null){
+					result.json({
+						"status":"error",
+						"message":"User has been logout. Please login again."
+					});
+				} else{
+					database.collection("tours").find({
+						"members._id": user._id
+					}).toArray(function(error,tour){
+						result.json({
+							"status":"success",
+							"data":tour
+						});
+					});
+				}
+			});
+		});
+		app.post("/note",function(request,result){
+			var ghiChu = request.fields.ghiChu;
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+			console.log(ghiChu);
+			console.log(_id);
+			database.collection("users").findOne({
+				"accessToken":accessToken
+			},function(error,user){
+				if (user==null){
+					result.json({
+						"status":"error",
+						"message":"User has been logout. Please login again."
+					});
+				} else {
+					database.collection("tours").findOne({
+						"_id":ObjectId(_id)
+					},function(error,tour){
+						if(tour.user._id.toString()==user._id.toString()){
+							database.collection("tours").updateOne({
+								"_id": tour._id
+							},{
+								$set:{
+									"ghiChu":ghiChu
+								}
+							},function(error,data){
+								result.json({
+									"status":"success",
+									"message":"Data has been fetched."
+								});
+							});
+						} else {
+							result.json({
+								"status":"error",
+								"message":"you does not own tour"
+							});
+						}
+					});
+				}
+			});
+		});
+		app.post("/lichTrinh",function(request,result){
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+			var tieude = request.fields.tieude;
+			var noidung = request.fields.noidung;
+			database.collection("users").findOne({
+				"accessToken":accessToken
+			},function(error,user){
+				if (user == null){
+					result.json({
+						"status":"error",
+						"message":"User has been logout. Please login aagain."
+					});
+				} else {
+					database.collection("tours").findOne({
+						"_id":ObjectId(_id)
+					}, function(error,tour){
+						if (tour.user._id.toString()==user._id.toString()){
+							database.collection("tours").updateOne({
+								"_id":tour._id
+							},{
+								$push:{
+									"lichTrinh":{
+										"tieude":tieude,
+										"noidung":noidung
+									}
+								}
+							},function(error,data){
+								result.json({
+									"status":"success",
+									"message":"Data has been fetched."
+								});
+							});
+						} else {
+							result.json({
+								"status":"error",
+								"message":"You does not own this tour."
+							});
+						}
+					});
+				}
+			});
+		});
+
+		app.post("/toggleJoinTour", function (request,result){
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+			console.log(_id);
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function(error,user){
+				if(user == null) {
+					result.json({
+						"status":"error",
+						"message":"User has been logged out. Please login again."
+					});
+				}else{
+					database.collection("tours").findOne({
+						"_id": ObjectId(_id)
+					}, function (error,tour){
+						if ( tour == null) {
+							result.json({
+								"status":"error",
+								"message":"Tour does not exist."
+							});
+						}else{
+							var isMember = false;
+							for (var a=0;a <tour.members.length;a++){
+								var member = tour.members[a];
+
+								if(member._id.toString()==user._id.toString()){
+									isMember = true;
+									break;
+								}
+							}
+							if (isMember) {
+								database.collection("tours").updateOne({
+									"_id": ObjectId(_id)},{
+										$pull:{
+											"members":{
+												"_id": user._id,
+											}
+										}
+									}, function (error,data){
+										database.collection("users").updateOne({
+											"accessToken":accessToken},{
+												$pull:{
+													"tours":{
+														"_id":ObjectId(_id)
+													}
+												}
+											}, function (error,data){
+												result.json({
+													"status":"leaved",
+													"message":"Tour has been left."
+												});
+											});
+									});
+							} else {
+								database.collection("tours").updateOne({
+									"_id":ObjectId(_id)
+								},{
+									$push:{
+										"members":{
+											"_id":user._id,
+											"name":user.name,
+											"profileImage": user.profileImage,
+											"status":"Pending"
+										}
+									}
+								}, function (error,data) {
+									database.collection("users").updateOne({
+										"accessToken":accessToken
+									},{
+										$push:{
+											"tours":{
+												"_id":tour._id,
+												"name":tour.tenChuyenDi,
+												"status":"Pending"
+											}
+										}
+									}, function (error,data){
+										database.collection("users").updateOne({
+											"_id":tour.user._id
+										},{
+											$push: {
+												"notifications":{
+													"_id":ObjectId(),
+													"type":"tour_join_request",
+													"content":user.name +"sent a request to join your tour.",
+													"profileImage": user.profileImage,
+													"tourId": tour._id,
+													"userId":user._id,
+													"status":"Pending",
+													"createAt": new Date().getTime()
+												}
+											}
+										});
+										result.json({
+											"status":"success",
+											"message":"Request to join tour has been sent."
+										});
+									});
+								});
+							}				 
+						}
+					});
+				}
+			});
+		});
+		app.post("/acceptRequestJoinTour",function(request,result){
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+			var tourId = request.fields.tourId;
+			// var userId = request.fields.userId;
+
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function (error, user){
+				if (user == null) {
+					result.json({
+						"status":"error",
+						"message":"User has been logged out. Please login again."
+					});
+					
+				} else {
+					database.collection("tours").findOne({
+						"_id": ObjectId(tourId)
+					},function (error,tour){
+						if (tour == null) {
+							result.json({
+								"status":"error",
+								"message":"Tour does not exist."
+							});
+						} else {
+							if (tour.user._id.toString()!= user._id.toString()){
+								result.json({
+									"status":"error",
+									"message":"Sorry, you do not own this tour."
+								});
+								return;
+							}
+
+							database.collection("tours").updateOne({
+								$and: [{
+									"_id": tour._id
+								}, {
+									"members._id": ObjectId(_id)
+								}]
+							},{
+								$set: {
+									"members.$.status":"Accepted"
+								}
+							},function (error,data){
+								database.collection("tours").updateOne({
+									$and: [{
+										"accessToken":accessToken
+									},{
+										"notifications.tourId": tour._id
+									}]
+								},{
+									$set: {
+										"notifications.$.status":"Accepted"
+									}
+								}, function (error,data){
+									database.collection("users").updateOne({
+										$and: [{
+											"_id": ObjectId(_id)
+										},{
+											"tours._id":tour._id
+										}]
+									},{
+										$set:{
+											"tours.$.status": "Accepted"
+										}
+									}, function (error,data){
+										result.json({
+											"status":"success",
+											"message":"Tour join request has been accepted."
+										});
+									});
+								});
+							});
+						}
+					});
+				}
+			});
+		});
+		app.post("/rejectRequestJoinTour", function(request, result){
+	
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+			var tourId = request.fields.tourId;
+
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function (error,user){
+				if (user == null){
+					result.json({
+						"status":"error",
+						"message": "User has been logged out. Please login again."
+					});
+
+				}else{
+					database.collection("tours").findOne({
+						"_id":ObjectId(tourId)
+					},function(error,tour){
+						if(tour==null){
+							result.json({
+								"status":"error",
+								"message":"Tour does not exist."
+							});
+						} else {
+							if (tour.user._id.toString()!= user._id.toString()){
+								result.json({
+									"status":"error",
+									"message":"Sorry,you do not own this tour."
+								});
+								return;
+							}
+							database.collection("tours").updateOne({
+								"_id": tour._id
+							},{
+								$pull: {
+									"members":{
+										"_id": ObjectId(_id)
+									}
+								}
+							}, function(error,data){
+								database.collection("users").updateOne({
+									"accessToken":accessToken
+								},{
+									$pull:{
+										"notifications":{
+											"tourId": tour._id
+										}
+									}
+								}, function (error, data){
+									database.collection("users").updateOne({
+										"_id": ObjectId(_id)
+									},{
+										$pull:{
+											"tours":{
+												"_id":tour._id
+											}
+										}
+									}, function(error,data){
+										result.json({
+											"status":"success",
+											"message":"Tour join reject has been rejected."
+										});
+									});
+								});
+							});
+						}
+					});
+				}
+			});
+		});
+
+		app.post("/getrandomTours",function (request, result){
+			var accessToken = request.fields.accessToken;
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function (error, user){
+				if (user == null) {
+					result.json({
+						"status":"error",
+						"message":"User has been logged out. Please login again."
+					});
+				} else{
+					database.collection("tours").aggregate([{ $sample: { size: 5 } }]).toArray(function(error,data){
+						result.json({
+							"status":"success",
+							"message":"Record has been fetched.",
 							"data": data
 						});
 					});

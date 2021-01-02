@@ -33,7 +33,7 @@
                                     <%= post.user.name %>
                                  <% } %>
                             </span>
-                            <span class="col-lg-12"><%= post.content%></span>
+                            <span class="col-lg-12" style=" white-space: pre-line; word-break: break-word;"><%= post.content%></span>
                         </div>
                     </div>
                 </div>
@@ -69,3 +69,25 @@
 </script>
 
 <%- include ("includes/footer") %>
+
+<div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Reply</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<div class="modal-body">
+				<form onsubmit="return doPostReply(this);">
+					<input type="hidden" name="postId">
+					<input type="hidden" name="commentId">
+					<input type="text" class="input-field" name="reply" placeholder="Reply comment in here" required>
+					<button class="button" style="float: right;" type="submit">Post</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

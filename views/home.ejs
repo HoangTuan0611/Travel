@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
+        <title>Travel</title>
         <link rel="stylesheet" href="public/css/home.css">
         <link rel="stylesheet" href="public/css/main.css">
     </head>
@@ -57,6 +57,15 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-12 padxx header-title">
+                    <span class="header-title">Những chuyến đi sắp diễn ra</span>
+                </div>
+                <div class="container padxxx">
+                    <div class="row" id="showAllTour">
+                        
+                    </div>
+                    <!-- <span id="ismember"></span> -->
                 </div>
                 <div class="col-md-12 padxx header-title">
                     <span class="header-title">Coffee</span>
@@ -715,42 +724,149 @@
             ajax.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     var response = JSON.parse(this.responseText);
-                    console.log(response);
-                    console.log(response.data.length);
                     var html="";
                     for (var a = 0; a < response.data.length; a++) {
                         var data = response.data[a];
-                        html+='<div class="form-group blog-review col-md-6 col-lg-4">';
-                            html+='<a href="' + mainURL + "/post/" + data._id + '" class="media-1" data-fancybox="gallery">';
-                                html+='<img src="' + mainURL + "/" + data.image + '" alt="Image" class="img-fluid">';
-                                html+='<div class="media-1-content">';
-                                    html+='<span class="category">';
-                                        html += data.content;
+                        if(data.image != ""){
+                            html+='<div class="form-group blog-review col-md-6 col-lg-4">';
+                                html+='<a href="' + mainURL + "/post/" + data._id + '" class="media-1" data-fancybox="gallery">';
+                                    html+='<img src="' + mainURL + "/" + data.image + '" alt="Image" class="img-fluid">';
+                                    html+='<div class="media-1-content">';
+                                        html+='<span class="category">';
+                                            html += data.content;
+                                        html+='</span>';
+                                    html+='</div>';
+                                html+='</a>'
+                                html+='<div class="title">';
+                                    html+='<span>';
+                                        html+=data.caption;
+                                    html+='</span>';
+                                html+=' </div>';
+                                html+='<div class="amount-post pad">';
+                                    html+='<span>';
+                                        if(data.uploader){
+                                            html+=data.uploader.name;
+                                        }
+                                        else{
+                                            html+=data.user.name;
+                                        }
                                     html+='</span>';
                                 html+='</div>';
-                            html+='</a>'
-                            html+='<div class="title">';
-                                html+='<span>';
-                                    html+=data.caption;
-                                html+='</span>';
-                            html+=' </div>';
-                            html+='<div class="amount-post pad">';
-                                html+='<span>';
-                                    if(data.uploader){
-                                        html+=data.uploader.name;
-                                    }
-                                    else{
-                                        html+=data.user.name;
-                                    }
-                                html+='</span>';
                             html+='</div>';
-                        html+='</div>';
+                        }
+                        else{
+
+                        }   
                     }
                     document.getElementById('allPost').innerHTML = html;
                 }
             }
             var formData = new FormData();
             formData.append("accessToken", localStorage.getItem("accessToken"));
+            ajax.send(formData);
+        }
+
+        var isAllShowTour = true;
+        function showAllTour(){
+            var ajax = new XMLHttpRequest();
+            ajax.open("POST", "/getrandomTours", true);
+
+            ajax.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var response = JSON.parse(this.responseText);
+                    console.log(response);
+                    var html="";
+                    for (var a = 0; a < response.data.length; a++) {
+                        var data = response.data[a];
+                        html+='<div class="form-group blog-review pt">'
+                            html+='<a href="' + mainURL + "/tour/" + data._id + '" class="pad media-1" data-fancybox="gallery">';
+                                html+='<img src="/public/img/saigon.jpeg" alt="Image" class="img-fluid-home">';
+                                html+='<div class="media-1-content">';
+                                    html+='<span class="category">';
+                                        html+='Team: ' + data.tenChuyenDi;
+                                        html+='<br>'
+                                        html+='Phượt từ ngày ' + data.thoiGianBatDau + ' đến ngày ' + data.thoiGianKetThuc;
+                                        html+='<br>'
+                                        html+='<span id="ismember"></span>'
+                                        // html+='<a style="text-decoration: none;">'
+                                        //     html+=' <button id="ismember" class="button button-custom"></button>'
+                                        // html+='</a>'
+                                    html+='</span>'
+                                html+='</div>'
+                            html+='</a>'
+                            html+='<div class="title">'
+                                html+= data.diemBatDau + ' - ' + data.diemKetThuc;
+                            html+='</div>'
+                        html+='</div>'
+                    }
+                    document.getElementById('showAllTour').innerHTML = html;
+                    var isMember = false;
+                    for(var a=0; a < response.data.length; a++){
+                        var data = response.data[a];
+                        for (var b = 0; b < data.members.length; b++){
+                            var member = data.members[b];
+                            var textfollow = "";
+                            if (member._id.toString()==user._id.toString()){
+                                isMember = true;
+                                textfollow+='<a href="javascript:void(0);"data-id="'+ data._id +'"onclick="toggleJoinTour(this);"class="add-butn btn-unfriend">Leave Tour</a>';
+                                document.getElementById("ismember").innerHTML = textfollow;
+                                break;
+                            }
+                            else{
+                                textfollow+='<a href="javascript:void(0);"data-id="'+ data._id +'"onclick="toggleJoinTour(this);"class="add-butn">Join Tour</a>';
+                                document.getElementById("ismember").innerHTML = textfollow;
+                            }
+                        }
+                    }
+                }
+            }
+            var formData = new FormData();
+            formData.append("accessToken", localStorage.getItem("accessToken"));
+            ajax.send(formData);
+        }
+    
+        function toggleJoinTour(self){
+            var ajax = new XMLHttpRequest();
+            ajax.open("POST","/toggleJoinTour",true);
+
+            ajax.onreadystatechange=function(){
+                if (this.readyState==4&&this.status==200){
+                    var response = JSON.parse(this.responseText);
+
+                    if(response.status=="success"){
+                        self.className = "add-butn btn-unfriend";
+                        self.innerHTML = "Leave";
+                        Swal.fire({
+                            title: 'Congratulations!',
+                            text: 'Bạn đã tham gia nhóm thành công',
+                            icon: 'success',
+                            timer: 2500
+                        })
+                    }
+                    if (response.status == "leaved"){
+                        self.className = "add-butn";
+                        self.innerHTML = "Join";
+                        Swal.fire({
+                            title: 'Congratulations!',
+                            text: 'Bạn đã rời nhóm thành công',
+                            icon: 'success',
+                            timer: 2500
+                        })
+                    }
+
+                    if (response.status == "error") {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message,
+                            icon: 'error',
+                            timer: 2500
+                        })
+                    }
+                }
+            };
+            var formData = new FormData();
+            formData.append("accessToken",localStorage.getItem("accessToken"));
+            formData.append("_id", self.getAttribute("data-id"));
             ajax.send(formData);
         }
     </script>

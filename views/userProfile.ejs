@@ -19,13 +19,6 @@
                 </span>
             </a>
         </div>
-        <div class="col-md-2">
-            <a style="text-decoration: none;" href="/setting">
-                <button class="button button-custom">
-                    Cài đặt
-                </button>
-            </a>
-        </div>
     </div>
     <div class="col-md-12">
         <ul class="col-md-12 nav" id="myTab" role="tablist" style="justify-content: center;">
@@ -103,72 +96,7 @@
             <div class="container hidden-xs container-custom">
                 <div class="col-md-12 col-lg-7 offset-md-2">
                     <div id="newsfeed">
-                        <% for(var i=0; i<user.posts.length; i++) {%>
-                            <div class="row padxxx">
-                                <div class="card">
-                                    <div class="card-header" style="padding: 10px !important; background-color: #fff;">
-                                        <a href="#" class="nav-link pr-0 leading-none">
-                                            <span class="avatar" style="background-image: url(/public/img/drink.jpg)"></span>
-                                            <span class="col-md-8">
-                                                <span class="name" name="name" class="text-default">
-                                                    <%= user.name %>
-                                                </span>
-                                                <small class="text-muted d-block mt-1">Published: </small>
-                                            </span>
-                                        </a>
-                                    </div>
-                                    <img class="card-img-top" src="http://localhost:3000/<%= user.posts[i].image%>">
-                                    <div class="card-body">
-                                        <div class="col-lg-12">
-                                            <div class="row">
-                                                <span class="user"><%= user.name %></span>
-                                                <span class="description col-lg-12"><%= user.posts[i].content%></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-footer" id="post-comments-<%= user.posts[i]._id%>">
-                                        <div class="col-lg-12">
-                                            <% for(var j=0; j<user.posts[i].comments.length; j++) {%>
-                                                <div class="row">
-                                                    <span class="user"><%= user.posts[i].comments[j].user.name%></span>
-                                                    <span class="description col-lg-8"><%= user.posts[i].comments[j].comment%></span>
-                                                    <a style="text-decoration: none;" class="col-lg-3 replycmt" href="javascript:void(0);" data-post-id="<%= user.posts[i]._id%>" data-comment-id="<%= user.posts[i].comments[j]._id%>" onclick="prepareToReply(this);" title="Reply">Reply</a>
-                                                    
-                                                    <ul>
-                                                        <% for(var a=0; a<user.posts[i].comments[j].replies.length; a++) {%>
-                                                        <li>
-                                                            <span class="user">
-                                                                <%= user.posts[i].comments[j].replies[a].user.name%>
-                                                            </span>
-                                                            <span class="description col-lg-9">
-                                                                <%= user.posts[i].comments[j].replies[a].reply%>
-                                                            </span>
-                                                        </li>
-                                                        <%} 
-                                                    %>
-                                                    </ul>
-                                                    
-                                                </div>
-                                                
-                                            <%} 
-                                            %>
-                                            <form method="post" onsubmit="return doPostComment(this);">
-                                                <div class="row">
-                                                    <div class="comment col-md-10">
-                                                        <input type="hidden" name="_id" value="<%= user.posts[i]._id%>">
-                                                        <input type="text" name="comment" class="input-field" placeholder="Viết bình luận">
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <button class="postcmt" type="submit">Post</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <%} 
-                        %>
+                    
                     </div>
                 </div>
             </div>
@@ -194,8 +122,144 @@
             </div>
         </div>
     </div>
+    <input type="hidden" id="post-data" value="<%= JSON.stringify(user); %>">
 </div>
 <%- include ("includes/footer") %>
+<script>
+    var isUserProfile = true;
+
+    function showUserProfile() {
+        var response = document.getElementById("post-data").value;
+        response = JSON.parse(response);
+        console.log(response);
+        var total = "";
+        var video = "";
+        var html= "";
+        for (var a = 0; a < response.posts.length; a++) {
+            var data = response.posts[a];
+            html+='<div class="row padxxx">';
+                        html+='<div class="card">';
+                            html+='<div class="card-header">';
+                                html+='<a href="#" class="nav-link pr-0 leading-none">';
+                                    html+='<span class="avatar" style="background-image: url(/public/img/dalat.jpeg)"></span>';
+                                    html+='<span class="col-md-8">';
+                                        html+='<span class="name" name="name" class="text-default">' ;
+                                        html += window.user.name;
+                                        html+='</span>';
+                                        var createdAt = new Date(data.createdAt);
+                                        var date = createdAt.getDate() + "";
+                                        date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
+                                        html+='<small class="text-muted d-block mt-1">Published: ' + date + '</small>';
+                                    html+='</span>'
+                                html+='</a>';
+                            html+='</div>';
+                            if (data.image != ""){
+                                html+='<a href="' + mainURL + "/post/" + data._id + '" class="media-1" data-fancybox="gallery">';
+                                    html+='<img class="card-img-top" src="' + mainURL + "/" + data.image + '">'
+                                html+='</a>'
+                            }
+                            else{
+
+                            }
+                            if(data.video != ""){
+                                html+='<a href="' + mainURL + "/post/" + data._id + '" class="media-1" data-fancybox="gallery">';
+                                    html+='<video width="630px" height="auto" controls>';
+                                        html+='<source src="' + mainURL + "/" + data.video + '">';
+                                    html+='</video>';
+                                html+='</a>'
+                            }
+                            else{
+
+                            }
+                            html+='<div class="card-body">';
+                                html+='<a style="text-decoration: none;color: #000;" href="' + mainURL + "/post/" + data._id + '" class="media-1" data-fancybox="gallery">';
+                                    html+='<div class="col-lg-12">';
+                                        html+='<div class="row">';
+                                            html+='<span class="user">';
+                                                html += data.caption;
+                                            html+='</span>';
+                                            html+='<span id="caption" class="description col-lg-12">';
+                                                html += data.content;
+                                            html+='</span>';
+                                        html+='</div>';
+                                    html+='</div>';
+                                html+='</a>'
+                            html+='</div>';
+                            //
+                            html+=createLikesSection(data);
+                            //
+                            html+='<div class="card-footer" id="post-comments-'+ data._id +'"">';
+                                html+='<div class="col-md-12">';  
+                                    data.comments = data.comments.reverse();
+                                    for (var b = 0; b < data.comments.length; b++) {
+                                        var comment = data.comments[b];
+
+                                        html += '<div class="row">';
+                                            html += '<span class="user"><a href="/">' + comment.user.name + '</a></span>';
+                                            html += '<span class="description col-lg-9">' + comment.comment + '</span>';     
+                                            html += '<a style="text-decoration: none;" class="col-lg-3 replycmt" href="javascript:void(0);" data-post-id="' + data._id + '" data-comment-id="' + comment._id + '" onclick="prepareToReply(this);" title="Reply">Reply</a>';
+
+                                            html += '<ul>';
+                                                comment.replies = comment.replies.reverse();
+                                                for (var c = 0; c < comment.replies.length; c++) {
+                                                    var reply = comment.replies[c];
+                                                    html += '<li>';
+                                                        html += '<span class="user"><a href="/">' + reply.user.name + '</a></span>';
+                                                        html += '<span class="description col-lg-9">' + reply.reply + '</span>';
+                                                    html += '</li>';
+                                                }
+                                            html += '</ul>';
+
+                                        html += '</div>';
+                                    }
+                               
+                                        // 
+                                    html += '<form method="post" onsubmit="return doPostComment(this);">';
+                                        html+='<div class="row">';
+                                            html+='<div class="comment col-md-10">';
+                                                html += '<input type="hidden" name="_id" value="' + data._id + '">';
+                                                html+='<input type="text" name="comment" class="input-field" placeholder="Viết bình luận">';
+                                            html+='</div>';
+                                            html+='<div class="col-md-2">';
+                                                html += '<button class="postcmt" type="submit">Post</button>';
+                                            html+='</div>';
+                                        html+='</div>';
+                                    html += '</form>';
+                                html+='</div>';
+                            html+='</div>';
+                        html+='</div>'
+                    html+='</div>'
+            if (data.image != ""){
+                total+='<div class="form-group blog-review col-md-6 col-lg-3">';
+                    total+='<a class="media-1" data-fancybox="gallery">';
+                            total+='<img src="' + mainURL + "/" + data.image + '" alt="Image" style="object-fit: cover;height:160px; width:100%" class="img-fluid">';
+                    total+='</a>';
+                total+='</div>';
+            }
+            else{
+                
+            } 
+                    
+            if (data.video != "")
+            {
+                video+='<div class="form-group blog-review col-md-6 col-lg-3">';
+                    video+='<a class="media-1" data-fancybox="gallery">';
+                            video+='<video width="100%" height="auto" controls>';
+                                video+='<source src="' + mainURL + "/" + data.video + '">';
+                            video+='</video>';
+                    video+='</a>';
+                video+='</div>';
+            }
+            else{
+                
+            }
+        }
+        document.getElementById("newsfeed").innerHTML = html;
+        document.getElementById("img-total").innerHTML = total;
+        document.getElementById("video-total").innerHTML = video;
+    }
+</script>
+
 <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">

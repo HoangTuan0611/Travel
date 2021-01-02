@@ -1,3 +1,6 @@
+<link rel="stylesheet" href="/public/css/profile.css">
+<!-- <link rel="stylesheet" href="/public/css/home.css"> -->
+<link rel="stylesheet" href="/public/css/tour.css">
 <%- include ("includes/header") %>
 <div class="container hidden-xs container-custom">
     <div class="col-md-12 form-group" style="padding-top: 10px;">
@@ -9,7 +12,7 @@
                 <span class="avatar" style="background-image: url(/public/img/dalat.jpeg)"></span>
                 <span class="col-md-8">
                     <span name="user-name" class="user-name text-default">
-                        
+                        Nguyễn Hoàng Tuấn
                     </span>
                     <div class="row">
                         <small class="text-muted col-md-6 col-lg-4 d-block mt-1">0 đang theo dõi</small>
@@ -19,7 +22,7 @@
             </a>
         </div>
         <div class="col-md-2">
-            <a style="text-decoration: none;" href="/setting">
+            <a style="text-decoration: none;" onclick="prepareToCreateTour();">
                 <button class="button button-custom">
                     Tạo tour
                 </button>
@@ -29,34 +32,34 @@
     <div class="col-md-12">
         <ul class="col-md-12 nav" id="myTab" role="tablist" style="justify-content: center;">
             <li class="nav-item" role="presentation">
-                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#review" role="tab" aria-controls="home" aria-selected="true">Quản lý</a>
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#manage" role="tab" aria-controls="home" aria-selected="true">Quản lý</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#image" role="tab" aria-controls="profile" aria-selected="false">Lịch sử</a>
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#history" role="tab" aria-controls="profile" aria-selected="false">Lịch sử</a>
             </li>
         </ul>
     </div>
     <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="review" role="tabpanel" aria-labelledby="home-tab">
+        <div class="tab-pane fade show active" id="manage" role="tabpanel" aria-labelledby="home-tab">
             <div class="container hidden-xs container-custom">
-                    <div class="row">
-                      <div class="form-group blog-review pt">
+                <div class="row" id="allTours">
+                    <!-- <div class="form-group blog-review pt">
                         <a href="#" class="pad media-1" data-fancybox="gallery">
                             <img src="public/img/saigon.jpeg" alt="Image" class="img-fluid-home">
                             <div class="media-1-content">
                                 <span class="category">
-                                
+                                    Sài Gòn - Đà lạt bắt đầu từ ngày 1/1 - 5/1
                                 </span>
                             </div>
                         </a>
                         <div class="title">
-                            <span>Sài Gòn Water Bus</span>
+                            <span>Sài Gòn - Đà lạt</span>
                         </div>
-                      </div>
-                    </div>
+                    </div> -->
+                </div>
             </div>
         </div>
-        <div class="tab-pane fade" id="image" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="profile-tab">
             <div class="container-custom">
                 <div class="col-md-12">
                     <div class="container">
@@ -67,5 +70,191 @@
             </div>
         </div>
     </div>
+    <div id="tour-data-hidden">
+
+    </div>
+    
 </div>
 <%- include ("includes/footer") %>
+<script>
+    var currentTab = 0; // Current tab is set to be the first tab (0)
+    function nextPrev(n) {
+        // This function will figure out which tab to display
+        var x = document.getElementsByClassName("tab");
+        // Exit the function if any field in the current tab is invalid:
+        if (n == 1 && !validateForm()) return false;
+        // Hide the current tab:
+        x[currentTab].style.display = "none";
+        // Increase or decrease the current tab by 1:
+        currentTab = currentTab + n;
+        // if you have reached the end of the form...
+        if (currentTab >= x.length) {
+            document.getElementById("regForm").submit();
+            var form = document.getElementById("regForm").elements;
+            doTour(form);
+            return true;
+        }
+        // Otherwise, display the correct tab:
+        showTab(currentTab);
+    }
+    function doTour(form){
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/createTour", true);
+
+        ajax.onreadystatechange = function(){
+            if (this.readyState == 4 && this.status == 200){
+                var response = JSON.parse(this.responseText);
+                console.log(response);
+                if(response.status =="success"){
+                    Swal.fire({
+                        title: 'Congratulations!',
+                        text: 'Bạn đã tạo chuyến đi thành công',
+                        icon: 'success',
+                        timer: 2500
+                    })
+                    window.location.href="/home"
+                }
+            }
+        };
+        var formData = new FormData($('#regForm')[0]);
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        ajax.send(formData);
+    }
+    function validateForm() {
+        // This function deals with validation of the form fields
+        var x, y, i, valid = true;
+        x = document.getElementsByClassName("tab");
+        y = x[currentTab].getElementsByTagName("input");
+        // A loop that checks every input field in the current tab:
+        for (i = 0; i < y.length; i++) {
+            // If a field is empty...
+            if (y[i].value == "") {
+            // add an "invalid" class to the field:
+            y[i].className += " invalid";
+            // and set the current valid status to false
+            valid = false;
+            }
+        }
+        // If the valid status is true, mark the step as finished and valid:
+        if (valid) {
+            document.getElementsByClassName("step")[currentTab].className += " finish";
+        }
+        return valid; // return the valid status
+    }
+    function fixStepIndicator(n) {
+        // This function removes the "active" class of all steps...
+        var i, x = document.getElementsByClassName("step");
+        for (i = 0; i < x.length; i++) {
+            x[i].className = x[i].className.replace(" active", "");
+        }
+        //... and adds the "active" class on the current step:
+        x[n].className += " active";
+    }
+
+    var isTours = true;
+    function getTours(){
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/getMyTour", true);
+        ajax.onreadystatechange = function(){
+            if (this.readyState == 4 && this.status == 200){
+                var response = JSON.parse(this.responseText);
+                var html = "";
+                if(response.data.length == 0){
+                    html+='<span>Chưa có chuyến đi nào</span>'
+                }
+				for (var a = 0; a < response.data.length; a++) {
+                    var data = response.data[a];
+                    html+='<div class="form-group blog-review pt">'
+                        html+='<a href="' + mainURL + "/tour/" + data._id + '" class="pad media-1" data-fancybox="gallery">';
+                            html+='<img src="/public/img/saigon.jpeg" alt="Image" class="img-fluid-home">';
+                            html+='<div class="media-1-content">';
+                                html+='<span class="category">';
+                                    html+='Team: ' + data.tenChuyenDi;
+                                    html+='<br>'
+                                    html+='Phượt từ ngày ' + data.thoiGianBatDau + ' đến ngày ' + data.thoiGianKetThuc;
+                                html+='</span>'
+                            html+='</div>'
+                        html+='</a>'
+                        html+='<div class="title">'
+                            html+= data.diemBatDau + ' - ' + data.diemKetThuc;
+                        html+='</div>'
+                    html+='</div>'
+                }
+                document.getElementById('allTours').innerHTML = html;
+            }
+        };
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		ajax.send(formData);
+    }
+</script>
+<div class="modal fade" id="createTour" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Tạo mới chuyến phượt</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="regForm">
+                    <div class="tab form-group">
+                        <div class="form-group">
+                            <label for="">Tên chuyến đi?</label>
+                            <br>
+                            <input type="text" name="tenChuyenDi" class="input-field" placeholder="Tên chuyến đi">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Phượt đi đâu đấy?</label>
+                            <br>
+                            <input type="text" name="diemBatDau" class="input-field pad" placeholder="Địa điểm bắt đầu">
+                            <input type="text" name="diemKetThuc" class="input-field" placeholder="Địa điểm kết thúc">
+                        </div>
+                    </div>
+                    <div class="tab form-group">
+                        <div class="form-group">
+                            <label for="">Thời gian?</label>
+                            <br>
+                            <input type="date" name="thoiGianBatDau" class="input-field pad" placeholder="Thời gian bắt đầu">
+                            <input type="date" name="thoiGianKetThuc" class="input-field" placeholder="Thời gian kết thúc">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Phương tiện chủ yếu?</label>
+                            <br>
+                            <select name="phuongTien" class="form-control" name="" id="">
+                                <option value="Xe máy">Xe máy</option>
+                                <option value="Ô tô">Ô tô</option>
+                                <option value="Xe khách">Xe khách</option>
+                                <option value="Máy bay">Máy bay</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="tab form-group">
+                        <div class="form-group">
+                            <label for="">Số lượng thành viên dự tính?</label>
+                            <br>
+                            <input name="soLuongThanhVien" type="text" class="input-field" placeholder="Số lượng thành viên dự tính">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Chi phí dự tính?</label>
+                            <br>
+                            <input name="chiPhi" type="text" class="input-field pad" placeholder="chi phí / 1 người">
+                        </div>
+                    </div>
+                    <div style="overflow:auto;">
+                        <div style="float:right;">
+                            <button type="button" class="button button-custom" id="prevBtn" onclick="nextPrev(-1)">Quay lại</button>
+                            <button type="button" class="button button-custom" id="nextBtn" onclick="nextPrev(1)">Tiếp theo</button>
+                        </div>
+                    </div>
+                    <div style="text-align:center;margin-top:40px;">
+                        <span class="step"></span>
+                        <span class="step"></span>
+                        <span class="step"></span>
+                    </div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
