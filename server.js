@@ -25,7 +25,6 @@ var users = [];
 var mainURL = "http://localhost:3000";
 
 socketIO.on("connection", function (socket) {
-	// console.log("User connected", socket.id);
 	socketID = socket.id;
 });
 
@@ -52,7 +51,6 @@ http.listen(3000, function () {
 					result.render("userProfile", {
 						"user": user
 					});
-					// console.log(user);
 				}
 			});
 		});
@@ -171,7 +169,8 @@ http.listen(3000, function () {
 							"pages": [],
 							"notifications": [],
 							"groups": [],
-							"posts": []
+							"posts": [],
+							"tours": []
 						}, function (error, data) {
 							result.json({
 								"status": "success",
@@ -379,249 +378,33 @@ http.listen(3000, function () {
 					$options: "i"
 				}
 			}).toArray(function (error, data) {
-				database.collection("groups").find({
-					"name":{
-						$regex: ".*" + query + ".*",
-						$options: "i"
-					}
+				database.collection("tours").find({
+					$or:[
+						{
+							"diemBatDau":{
+								$regex: ".*" + query + ".*",
+								$options: "i"
+							}
+						},
+						{
+							"diemKetThuc":{
+								$regex: ".*" + query + ".*",
+								$options: "i"
+							}
+						}
+					]
 				})
-				.toArray(function(error, groups){
+				.toArray(function(error, tour){
 					result.json({
 						"status": "success",
 						"message": "Record has been fetched",
 						"data" : data,
-						"groups": groups
+						"tour": tour
 					})
 				})
 			});
 		});
 		// Api like, share, comment
-		app.post("/toggleLikePost", function (request, result) {
-
-			var accessToken = request.fields.accessToken;
-			var _id = request.fields._id;
-
-			database.collection("users").findOne({
-				"accessToken": accessToken
-			}, function (error, user) {
-				if (user == null) {
-					result.json({
-						"status": "error",
-						"message": "User has been logged out. Please login again."
-					});
-				} else {
-
-					database.collection("posts").findOne({
-						"_id": ObjectId(_id)
-					}, function (error, post) {
-						if (post == null) {
-							result.json({
-								"status": "error",
-								"message": "Post does not exist."
-							});
-						} else {
-							var isLiked = false;
-							for (var a = 0; a < post.likers.length; a++) {
-								var liker = post.likers[a];
-								if (liker._id.toString() == user._id.toString()) {
-									isLiked = true;
-									break;
-								}
-							}
-							if (isLiked) {
-								database.collection("posts").updateOne({
-									"_id": ObjectId(_id)
-								}, {
-									$pull: {
-										"likers": {
-											"_id": user._id,
-										}
-									}
-								}, function (error, data) {
-
-									database.collection("users").updateOne({
-										$and: [{
-											"_id": post.user._id
-										}, {
-											"posts._id": post._id
-										}]
-									}, {
-										$pull: {
-											"posts.$[].likers": {
-												"_id": user._id,
-											}
-										}
-									});
-
-									result.json({
-										"status": "unliked",
-										"message": "Post has been unliked."
-									});
-								});
-							} else {
-
-								database.collection("users").updateOne({
-									"_id": post.user._id
-								}, {
-									$push: {
-										"notifications": {
-											"_id": ObjectId(),
-											"type": "photo_liked",
-											"content": user.name + " has liked your post.",
-											"profileImage": user.profileImage,
-											"isRead": false,
-											"post": {
-												"_id": post._id
-											},
-											"createdAt": new Date().getTime()
-										}
-									}
-								});
-
-								database.collection("posts").updateOne({
-									"_id": ObjectId(_id)
-								}, {
-									$push: {
-										"likers": {
-											"_id": user._id,
-											"name": user.name,
-											"profileImage": user.profileImage
-										}
-									}
-								}, function (error, data) {
-
-									database.collection("users").updateOne({
-										$and: [{
-											"_id": post.user._id
-										}, {
-											"posts._id": post._id
-										}]
-									}, {
-										$push: {
-											"posts.$[].likers": {
-												"_id": user._id,
-												"name": user.name,
-												"profileImage": user.profileImage
-											}
-										}
-									});
-
-									result.json({
-										"status": "success",
-										"message": "Post has been liked."
-									});
-								});
-							}
-
-						}
-					});
-
-				}
-			});
-		});
-
-		app.post("/postComment", function (request, result) {
-			var accessToken = request.fields.accessToken;
-			var _id = request.fields._id;
-			var comment = request.fields.comment;
-			var createdAt = new Date().getTime();
-
-			database.collection("users").findOne({
-				"accessToken": accessToken
-			}, function (error, user) {
-				if (user == null) {
-					result.json({
-						"status": "error",
-						"message": "User has been logged out. Please login again."
-					});
-				} else {
-					database.collection("posts").findOne({
-						"_id": ObjectId(_id)
-					}, function (error, post) {
-						if (post == null) {
-							result.json({
-								"status": "error",
-								"message": "Post does not exist."
-							});
-						} else {
-							var commentId = ObjectId();
-							database.collection("posts").updateOne({
-								"_id": ObjectId(_id)
-							}, {
-								$push: {
-									"comments": {
-										"_id": commentId,
-										"user": {
-											"_id": user._id,
-											"name": user.name,
-											"username": user.username,
-										},
-										"comment": comment,
-										"createdAt": createdAt,
-										"replies": []
-									}
-								}
-							}, function (error, data) {
-								if (user._id.toString() != post.user._id.toString()) {
-									database.collection("users").updateOne({
-										"_id": post.user._id
-									}, {
-										$push: {
-											"notifications": {
-												"_id": ObjectId(),
-												"type": "new_comment",
-												"content": user.name + " commented on your post.",
-												"profileImage": user.profileImage,
-												"post": {
-													"_id": post._id
-												},
-												"isRead": false,
-												"createdAt": new Date().getTime()
-											}
-										}
-									});
-								}
-								// console.log(post.user._id);
-								// console.log(post._id);
-								database.collection("users").updateOne({
-									$and: [{
-										"_id": post.user._id
-									}, {
-										"posts._id": post._id
-									}]
-								}, {
-									$push: {
-										"posts.$.comments": {
-											"_id": commentId,
-											"user": {
-												"_id": user._id,
-												"name": user.name,
-												"username": user.username,
-												"profileImage": user.profileImage,
-											},
-											"comment": comment,
-											"createdAt": createdAt,
-											"replies": []
-										}
-									}
-								});
-
-								database.collection("posts").findOne({
-									"_id": ObjectId(_id)
-								}, function (error, updatePost) {
-									result.json({
-										"status": "success",
-										"message": "Comment has been posted.",
-										"updatePost": updatePost
-									});
-								});
-							});
-
-						}
-					});
-				}
-			});
-		});
 
 		app.post("/postReply", function (request, result) {
 			var accessToken = request.fields.accessToken;
@@ -696,9 +479,6 @@ http.listen(3000, function () {
 								{
 									arrayFilters:[{'i._id' : ObjectId(commentId)}]
 								});
-								// console.log(post.user._id);
-								// console.log(post._id);
-								// console.log(ObjectId(commentId));
 								database.collection("posts").findOne({
 									"_id": ObjectId(postId)
 								}, function (error, updatePost) {
@@ -802,69 +582,6 @@ http.listen(3000, function () {
 
 		//
 
-		app.post("/sendFriendRequest", function(request,result){
-			var accessToken = request.fields.accessToken;
-			var _id = request.fields._id;
-			database.collection("users").findOne({
-				"accessToken": accessToken
-			}, function(error,user){
-				if (user == null) {
-					result.json({
-						"status":"error",
-						"message": "User has been logged out. Please login again."
-					});
-				} else {
-					var me = user;
-					database.collection("users").findOne({
-						"_id":ObjectId(_id)
-					}, function(error,user){
-						if (user == null){
-							result.json({
-								"status":"error",
-								"message":"User does not exit"
-							});
-						} else {
-							database.collection("users").updateOne({
-								"_id":ObjectId(_id)
-							}, {
-								$push: {
-									"friends": {
-										"_id":me._id,
-										"name": me.name,
-										"username": me.username,
-										"profileImage":me.profileImage,
-										"status":"Pending",
-										"sentByMe": false,
-										"inbox": []
-									}
-								}
-							}, function(error,data){
-								database.collection("users").updateOne({
-									"_id":me._id
-								},{
-									$push:{
-										"friends": {
-											"_id": user._id,
-											"name": user.name,
-											"username": user.username,
-											"profileImage": user.profileImage,
-											"status":"Pending",
-											"sentByMe":true,
-											"inbox":[]
-										}
-									}
-								}, function(error,data){
-									result.json({
-										"status":"success",
-										"message":"Friend request has been sent."
-									});
-								});
-							});
-						}
-					});
-				}			
-			});
-		});
 		app.post("/acceptFriendRequest", function(request,result){
 			var accessToken = request.fields.accessToken;
 			var _id = request.fields._id;
@@ -894,7 +611,7 @@ http.listen(3000, function () {
 									"notification":{
 										"_id": ObjectId(),
 										"type":"friend_request_accepted",
-										"content":me.name + "accepted your friend request.",
+										"content":me.name + " accepted your friend request.",
 										"profileImage": me.profileImage,
 										"createdAt": new Date().getTime()
 									}
@@ -980,8 +697,6 @@ http.listen(3000, function () {
 								});
 							});
 						}
-						// console.log(user._id);
-						// console.log(me._id);
 					});
 				}
 			});
@@ -994,7 +709,6 @@ http.listen(3000, function () {
 		});
 		app.post("/getFriendsChat",function(request,result){
 			var accessToken = request.fields.accessToken;
-			// console.log(accessToken);
 			var _id = request.fields._id;
 		
 			database.collection("users").findOne({
@@ -1385,7 +1099,6 @@ http.listen(3000, function () {
 		app.post("/toggleJoinGroup", function (request,result){
 			var accessToken = request.fields.accessToken;
 			var _id = request.fields._id;
-			// console.log(ObjectId(_id));
 	
 			database.collection("users").findOne({
 				"accessToken": accessToken
@@ -1789,6 +1502,9 @@ http.listen(3000, function () {
 			var chiPhi = request.fields.chiPhi;
 			var soLuongThanhVien = request.fields.soLuongThanhVien;
 			var trangthai = "con_slot";
+			var image = "";
+			var ghiChu = "";
+			var inbox = "";
 
 			database.collection("users").findOne({
 				"accessToken": accessToken
@@ -1799,8 +1515,15 @@ http.listen(3000, function () {
 						"message":"User has been logged out. Please login again."
 					});
 				} else {
+					if (request.files.image.size > 0 && request.files.image.type.includes("image")) {
+						image = "public/images/" + new Date().getTime() + "-" + request.files.image.name;
+						fileSystem.rename(request.files.image.path, image, function (error) {
+
+						});
+					}
 					database.collection("tours").insertOne({
 						"tenChuyenDi": tenChuyenDi,
+						"image": image,
 						"diemBatDau": diemBatDau,
 						"diemKetThuc": diemKetThuc,
 						"thoiGianBatDau": thoiGianBatDau,
@@ -1809,7 +1532,7 @@ http.listen(3000, function () {
 						"chiPhi":chiPhi,
 						"soLuongThanhVien": soLuongThanhVien,
 						"trangthai":trangthai,
-							
+						"ghiChu":ghiChu,
 						"members": [{
 							"_id": user._id,
 							"name": user.name,
@@ -1820,7 +1543,8 @@ http.listen(3000, function () {
 							"_id":user._id,
 							"name":user.name,
 							"profileImage":user.profileImage
-						}	
+						},
+						"inbox":[],
 					},function (error,data){
 						database.collection("users").updateOne({
 							"accessToken":accessToken
@@ -1882,6 +1606,24 @@ http.listen(3000, function () {
 				}
 			});
 		});
+		app.get("/tourrequest/:_id", function (request,result){
+			var _id = request.params._id;
+
+			database.collection("tours").findOne({
+				"_id": ObjectId(_id)
+			}, function(error, tour){
+				if (tour == null) {
+					result.json({
+						"status":"error",
+						"message":"Tour does not exist."
+					});
+				} else {
+					result.render("inviteTour",{
+						"tour": tour
+					});
+				}
+			});
+		});
 		app.get("/post/:id", function (request, result) {
 			database.collection("posts").findOne({
 				"_id": ObjectId(request.params.id)
@@ -1902,7 +1644,6 @@ http.listen(3000, function () {
 		app.post("/deletePost",function(request,result){
 			var accessToken = request.fields.accessToken;
 			var _id = request.fields._id;
-			console.log(_id);
 			database.collection("users").findOne({
 				"accessToken": accessToken
 			}, function (error, user) {
@@ -1945,16 +1686,9 @@ http.listen(3000, function () {
 										"_id":user._id
 									},{
 										$pull:{
-											"_id": post._id,
-											"caption": post.caption,
-											"content": post.content,
-											"image": post.image,
-											"video": post.video,
-											"type": post.type,
-											"createdAt": post.createdAt,
-											"likers": post.likers,
-											"comments": post.comments,
-											"shares": post.shares
+											"posts":{
+												"_id": post._id
+											}	
 										}
 									},function(error,data){
 										result.json({
@@ -2000,8 +1734,6 @@ http.listen(3000, function () {
 			var ghiChu = request.fields.ghiChu;
 			var accessToken = request.fields.accessToken;
 			var _id = request.fields._id;
-			console.log(ghiChu);
-			console.log(_id);
 			database.collection("users").findOne({
 				"accessToken":accessToken
 			},function(error,user){
@@ -2039,9 +1771,8 @@ http.listen(3000, function () {
 		});
 		app.post("/lichTrinh",function(request,result){
 			var accessToken = request.fields.accessToken;
+			var lichtrinh = request.fields.lichtrinh;
 			var _id = request.fields._id;
-			var tieude = request.fields.tieude;
-			var noidung = request.fields.noidung;
 			database.collection("users").findOne({
 				"accessToken":accessToken
 			},function(error,user){
@@ -2056,13 +1787,10 @@ http.listen(3000, function () {
 					}, function(error,tour){
 						if (tour.user._id.toString()==user._id.toString()){
 							database.collection("tours").updateOne({
-								"_id":tour._id
+								"_id": tour._id
 							},{
-								$push:{
-									"lichTrinh":{
-										"tieude":tieude,
-										"noidung":noidung
-									}
+								$set:{
+									"lichTrinh": lichtrinh
 								}
 							},function(error,data){
 								result.json({
@@ -2084,7 +1812,6 @@ http.listen(3000, function () {
 		app.post("/toggleJoinTour", function (request,result){
 			var accessToken = request.fields.accessToken;
 			var _id = request.fields._id;
-			console.log(_id);
 			database.collection("users").findOne({
 				"accessToken": accessToken
 			}, function(error,user){
@@ -2359,5 +2086,696 @@ http.listen(3000, function () {
 			});
 		});
 
+		// 
+		app.post("/toggleLikePost", function (request, result) {
+
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+			var type = request.fields.type;
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function (error, user) {
+				if (user == null) {
+					result.json({
+						"status": "error",
+						"message": "User has been logged out. Please login again."
+					});
+				} else {
+
+					database.collection("posts").findOne({
+						"_id": ObjectId(_id)
+					}, function (error, post) {
+						if (post == null) {
+							result.json({
+								"status": "error",
+								"message": "Post does not exist."
+							});
+						} else {
+							var isLiked = false;
+							for (var a = 0; a < post.likers.length; a++) {
+								var liker = post.likers[a];
+								if (liker._id.toString() == user._id.toString()) {
+									isLiked = true;
+									break;
+								}
+							}
+							if (isLiked) {
+								database.collection("posts").updateOne({
+									"_id": ObjectId(_id)
+								}, {
+									$pull: {
+										"likers": {
+											"_id": user._id,
+										}
+									}
+								}, function (error, data) {
+
+									database.collection("users").updateOne({
+										$and: [{
+											"_id": post.user._id
+										}, {
+											"posts._id": post._id
+										}]
+									}, {
+										$pull: {
+											"posts.$[].likers": {
+												"_id": user._id,
+											}
+										}
+									});
+
+									result.json({
+										"status": "unliked",
+										"message": "Post has been unliked."
+									});
+								});
+							} else {
+								if(type=="groups_post"){
+									database.collection("users").updateOne({
+										"_id": post.uploader._id
+									}, {
+										$push: {
+											"notifications": {
+												"_id": ObjectId(),
+												"type": "photo_liked",
+												"content": user.name + " has liked your post.",
+												"profileImage": user.profileImage,
+												"isRead": false,
+												"post": {
+													"_id": post._id
+												},
+												"createdAt": new Date().getTime()
+											}
+										}
+									});
+								}else{
+									database.collection("users").updateOne({
+										"_id": post.user._id
+									}, {
+										$push: {
+											"notifications": {
+												"_id": ObjectId(),
+												"type": "photo_liked",
+												"content": user.name + " has liked your post.",
+												"profileImage": user.profileImage,
+												"isRead": false,
+												"post": {
+													"_id": post._id
+												},
+												"createdAt": new Date().getTime()
+											}
+										}
+									});
+								}
+								database.collection("posts").updateOne({
+									"_id": ObjectId(_id)
+								}, {
+									$push: {
+										"likers": {
+											"_id": user._id,
+											"name": user.name,
+											"profileImage": user.profileImage
+										}
+									}
+								}, function (error, data) {
+
+									database.collection("users").updateOne({
+										$and: [{
+											"_id": post.user._id
+										}, {
+											"posts._id": post._id
+										}]
+									}, {
+										$push: {
+											"posts.$[].likers": {
+												"_id": user._id,
+												"name": user.name,
+												"profileImage": user.profileImage
+											}
+										}
+									});
+
+									result.json({
+										"status": "success",
+										"message": "Post has been liked."
+									});
+								});
+							}
+
+						}
+					});
+
+				}
+			});
+		});
+		app.post("/postComment", function (request, result) {
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+			var comment = request.fields.comment;
+			var createdAt = new Date().getTime();
+			var type = request.fields.type;
+
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function (error, user) {
+				if (user == null) {
+					result.json({
+						"status": "error",
+						"message": "User has been logged out. Please login again."
+					});
+				} else {
+					database.collection("posts").findOne({
+						"_id": ObjectId(_id)
+					}, function (error, post) {
+						if (post == null) {
+							result.json({
+								"status": "error",
+								"message": "Post does not exist."
+							});
+						} else {
+							var commentId = ObjectId();
+							database.collection("posts").updateOne({
+								"_id": ObjectId(_id)
+							}, {
+								$push: {
+									"comments": {
+										"_id": commentId,
+										"user": {
+											"_id": user._id,
+											"name": user.name,
+											"username": user.username,
+										},
+										"comment": comment,
+										"createdAt": createdAt,
+										"replies": []
+									}
+								}
+							}, function (error, data) {
+								if (user._id.toString() != post.user._id.toString()) {
+									if(type=="group_post"){
+										database.collection("users").updateOne({
+											"_id": post.uploader._id
+										}, {
+											$push: {
+												"notifications": {
+													"_id": ObjectId(),
+													"type": "new_comment",
+													"content": user.name + " commented on your post.",
+													"profileImage": user.profileImage,
+													"post": {
+														"_id": post._id
+													},
+													"isRead": false,
+													"createdAt": new Date().getTime()
+												}
+											}
+										});
+									}else{
+										database.collection("users").updateOne({
+											"_id": post.user._id
+										}, {
+											$push: {
+												"notifications": {
+													"_id": ObjectId(),
+													"type": "new_comment",
+													"content": user.name + " commented on your post.",
+													"profileImage": user.profileImage,
+													"post": {
+														"_id": post._id
+													},
+													"isRead": false,
+													"createdAt": new Date().getTime()
+												}
+											}
+										});
+									}	
+								}
+								database.collection("users").updateOne({
+									$and: [{
+										"_id": post.user._id
+									}, {
+										"posts._id": post._id
+									}]
+								}, {
+									$push: {
+										"posts.$.comments": {
+											"_id": commentId,
+											"user": {
+												"_id": user._id,
+												"name": user.name,
+												"username": user.username,
+												"profileImage": user.profileImage,
+											},
+											"comment": comment,
+											"createdAt": createdAt,
+											"replies": []
+										}
+									}
+								});
+
+								database.collection("posts").findOne({
+									"_id": ObjectId(_id)
+								}, function (error, updatePost) {
+									result.json({
+										"status": "success",
+										"message": "Comment has been posted.",
+										"updatePost": updatePost
+									});
+								});
+							});
+
+						}
+					});
+				}
+			});
+		});
+		app.post("/sendFriendRequest", function(request,result){
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function(error,user){
+				if (user == null) {
+					result.json({
+						"status":"error",
+						"message": "User has been logged out. Please login again."
+					});
+				} else {
+					var me = user;
+					database.collection("users").findOne({
+						"_id":ObjectId(_id)
+					}, function(error,user){
+						if (user == null){
+							result.json({
+								"status":"error",
+								"message":"User does not exit"
+							});
+						} else {
+							database.collection("users").updateOne({
+								"_id":ObjectId(_id)
+							}, {
+								$push: {
+									"friends": {
+										"_id":me._id,
+										"name": me.name,
+										"username": me.username,
+										"profileImage":me.profileImage,
+										"status":"Pending",
+										"sentByMe": false,
+										"inbox": []
+									}
+								}
+							}, function(error,data){
+								database.collection("users").updateOne({
+									"_id":me._id
+								},{
+									$push:{
+										"friends": {
+											"_id": user._id,
+											"name": user.name,
+											"username": user.username,
+											"profileImage": user.profileImage,
+											"status":"Pending",
+											"sentByMe":true,
+											"inbox":[]
+										}
+									}
+								}, function(error,data){
+									database.collection("users").updateOne({
+										"_id":ObjectId(_id)
+									},{
+										$push:{
+											"notifications":{
+												"_id":ObjectId(),
+												"type":"add_friends_request",
+												"content":me.name +"send friend request ",
+												"profileImage": me.profileImage,
+												"status":"Pending",
+												"createAt": new Date().getTime()
+											}
+										}
+									});
+									result.json({
+										"status":"success",
+										"message":"Friend request has been sent."
+									});
+								});
+							});
+						}
+					});
+				}			
+			});
+		});
+		
+		app.get("/allTour", function (request, result) {
+			result.render("allTour");
+		});
+
+		app.post("/editLichTrinh",function(request,result){
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+			var idlichtrinh = request.fields.idlichtrinh;
+			var tieude = request.fields.tieude;
+			var noidung = request.fields.noidung;
+			database.collection("user").findOne({
+				"accessToken":accessToken
+			},function(error,user){
+				if (user == null){
+					result.json({
+						"status":"error",
+						"message":"User has been logout. Please login again."
+					});
+				} else {
+					database.collection("tours").findOne({
+						"_id":ObjectId(_id)
+					},function(error,tour){
+						if(tour.user._id.toString()==user._id.toString()){
+							database.collection("tours").updateOne({
+								$and:[
+									{
+										"_id":tour._id
+									},
+									{
+										"tours.lichTrinh._id": ObjectId(idlichtrinh)
+									}
+								]
+							},{
+								$set:{
+									"lichTrinh":{
+										"tieude": tieude,
+										"noidung": noidung
+									}
+								}
+							},function(error,data){
+								result.json({
+									"status":"success",
+									"message":"Data has been fetched."
+								});
+							});
+						}else{
+							result.json({
+								"status":"error",
+								"message":"You does not own tour"
+							});
+						}
+					});
+				}
+			});
+		});
+
+		app.post("/deleteTour",function(request,result){
+			var _id = request.fields._id;
+			var accessToken = request.fields.accessToken;
+			database.collection("users").findOne({
+				"accessToken":accessToken
+			},function(error,user){
+				if(user==null){
+					result.json({
+						"status":"error",
+						"message":"User has been logout. Please login again."
+					});
+				} else {
+					database.collection("tours").findOne({
+						"_id":ObjectId(_id)
+					},function(error,tour){
+						if(tour.user._id.toString()==user._id.toString()){
+							for(var a=0;a<tour.members.length;a++){
+								var member = tour.members[a];
+								database.collection("tours").updateOne({
+									"_id":ObjectId(_id)										
+								},{
+									$pull:{
+										"members":{
+											"_id": member._id
+										}
+									}
+								});
+								database.collection("users").updateOne({
+									"_id": member._id
+								},{
+									$pull:{
+										"tours":{
+											"_id": tour._id
+										}
+									}
+								});
+							}
+							database.collection("tours").deleteOne({
+								"_id":ObjectId(_id)
+							});
+							result.json({
+								"status":"success",
+								"message":"Data has been fetched."
+							});
+						} else {
+							result.json({
+								"status":"error",
+								"message":"You does not own this tour."
+							});
+						}
+					});
+				}
+			});
+		});
+
+		app.post("/sendInviteJoinTour", function(request,result){
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+			var tourid = request.fields.tourid;
+			console.log(tourid);
+			console.log(_id);
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function(error,user){
+				if (user == null) {
+					result.json({
+						"status":"error",
+						"message": "User has been logged out. Please login again."
+					});
+				} else {
+					var me = user;
+					database.collection("users").findOne({
+						"_id":ObjectId(_id)
+					}, function(error,user){
+						if (user == null){
+							result.json({
+								"status":"error",
+								"message":"User does not exist"
+							});
+						} else {						
+							database.collection("tours").findOne({
+								"_id":ObjectId(tourid)
+							}, function(error,tour){
+								if (tour == null){
+									result.json({
+										"status":"error",
+										"message":"Tour does not exist."
+									});
+								} else {
+									var isMember = false;
+									for (var a=0;a<tour.members.length;a++){
+										var member = tour.members[a];
+
+										if(member._id.toString()==user._id.toString()){
+											isMember = true;
+											break;
+										}
+									}
+									if (!isMember){
+										if (tour.user._id.toString()==me._id){
+											database.collection("tours").updateOne({
+												"_id":ObjectId(tourid)
+											},{
+												$push:{
+													"members":{
+														"_id":user._id,
+														"name": user.name,
+														"profilename": user.profilename,
+														"status":"Pending"
+													}
+												}
+											}, function(error, data){
+												database.collection("users").updateOne({
+													"_id":ObjectId(_id)
+												},{
+													$push:{
+														"tours":{
+															"_id": tour._id,
+															"name": tour.tenChuyenDi,
+															"status":"Pending"
+														},
+														"notifications":{
+															"_id":ObjectId(),
+															"type":"tour_invite_join",
+															"content":me.name +"invite you to join "+tour.tenChuyenDi+"tour.",
+															"profileImage": me.profileImage,
+															"tourId": tour._id,
+															"userId":user._id,
+															"status":"Pending",
+															"createAt": new Date().getTime()
+														}
+													}
+												}, function (error, data){
+													result.json({
+														"status":"success",
+														"message":"Invite request has been sent."
+													});
+												});
+											});
+										} else {
+											result.json({
+												"status":"error",
+												"message":"You does not own this tour."
+											});
+										}
+									}else {
+										result.json({
+											"status":"error",
+											"message":"Thành viên này đã ở trong tour."
+										});
+									}
+								}
+							});
+						}
+					});
+				}			
+			});
+		});
+		app.post("/acceptInviteJoinTour",function(request,result){
+			var accessToken = request.fields.accessToken;
+			var tourid = request.fields.tourid;
+			var userid = request.fields.userid;
+			console.log(tourid);
+			console.log(userid);
+			database.collection("users").findOne({
+				"accessToken":accessToken
+			},function(error,user){
+				if(user==null){
+					result.json({
+						"status":"error",
+						"message":"User has been log out.Please login again."
+					});
+				} else {
+					var me= user;
+					database.collection("tours").findOne({
+						"_id":ObjectId(tourid)
+					},function(error,tour){
+						if(tour==null){
+							result.json({
+								"status":"error",
+								"message":"Tour does not exist."
+							});
+						} else {
+							database.collection("tours").updateOne({
+								$and:[
+									{"_id":ObjectId(tourid)},
+									{"members._id": user._id}
+								]
+							},{
+								$set:{
+									"members.$.status":"Accepted"
+								}
+							},function(error,data){
+								database.collection("users").updateOne({
+									$and:[
+										{"_id":user._id},
+										{"tours._id":tourid}
+									]
+								},{
+									$set:{
+										"tours.$.status":"Accepted"
+									}
+								},function(error,data){
+									database.collection("users").updateOne({
+										"_id":userid
+									},{
+										$push:{
+											"notifications":{
+												"_id":ObjectId(),
+												"type":"notifications",
+												"content":user.name +" accepted request to join your tour.",
+												"profileImage": user.profileImage,
+												"tourId": tour._id,
+												"userId":user._id,
+												"status":"Pending",
+												"createAt": new Date().getTime()
+											}
+										}
+									});
+									result.json({
+										"status":"success",
+										"message":"Welcome to tour."
+									});
+								});
+							});
+						}
+					});
+				}
+			});
+		});
+
+		app.post("/getTourChat",function(request,result){
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function (error, user){
+				if (user == null){
+					result.json({
+						"status":"error",
+						"message": "User has been logged out. Please login again."
+					});
+				}else {
+					database.collection("tours").findOne({
+						"_id":ObjectId(_id)
+					},function(error,tour){
+						result.json({
+							"status":"success",
+							"message":"Record has been fetched",
+							"data": tour.inbox
+						});
+					})		
+				}
+			});
+		});
+		app.post("/sendTourMessage", function (request,result){
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+			var message = request.fields.message;
+
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function (error, user){
+				if (user == null) {
+					result.json({
+						"status":"error",
+						"message": "User has been logged out. Please login again."
+					});
+				} else {				
+					database.collection("tours").updateOne({
+						"_id":ObjectId(_id)
+					},{
+						$push: {
+							"inbox":{
+								"_id": ObjectId(),
+								"message": message,
+								"from": user._id,
+								"name": user.name
+							}
+						}
+					}, function (error, data){
+						socketIO.broadcast.emit("messageTourReceived",{
+							"message":message,
+							"from": user._id
+						});
+						result.json({
+							"status":"success",
+							"message":"Message has been sent"
+						});
+					});						
+				}
+			});
+		});			
 	});
 });

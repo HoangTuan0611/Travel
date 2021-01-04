@@ -1,11 +1,26 @@
-
+<link rel="stylesheet" href="/public/css/main.css">
+<link rel="stylesheet" href="public/css/category.css">
+<link rel="stylesheet" href="public/css/notification.css">
 <%- include ("includes/header") %>
 <div class="container">
     <div class="col-md-12">
         <label class="title">Notifications</label>
     </div>
     <div class="col-md-12">
-        <ul id="all-notifications"></ul>
+        <ul id="all-notifications">
+			<!-- <li>
+				<div class="row">
+					<div class="col-md-2 col-lg-1">
+						<img class="img-noti" src="/public/img/dalat.jpeg" alt="">
+					</div>
+					<div class="col-md-10 col-lg-11">
+						<span class="description">
+							Hứa Phước Thanh sent a request to join your tour.
+						</span>
+					</div>
+				</div>
+			</li> -->
+		</ul>
     </div>
 </div>
 
@@ -17,26 +32,45 @@
 
 		var notifications = window.user.notifications.reverse();
 
+		console.log(notifications);
+
 		for (var a = 0; a < notifications.length; a++) {
 			var data = notifications[a];
-			html += '<li>';
+			html += '<li class="padxx">';
 				if (data.type == "new_comment" || data.type == "photo_liked")
 				{
 					html += "<a href='/post/" + data.post._id + "'>";
 				}
-					html += '<figure><img src="' + mainURL + '/' + data.profileImage + '" style="width: 45px; height: 45px; object-fit: cover;"></figure>';
-					html += '<div class="notifi-meta">';
-						html += '<p>' + data.content + '</p>';
-
-						var createdAt = new Date(data.createdAt);
-						var date = createdAt.getDate() + "";
-						date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
-						date += " " + createdAt.getHours() + ":" + createdAt.getMinutes();
-
-						html += '<span>' + date + '</span>';
-					html += '</div>';
-
+				if (data.type == "tour_join_request")
+				{
+					html += "<a href='/tour/" + data.tourId + "'>";
+				}
+				if (data.type == "tour_invite_join")
+				{
+					html += "<a href='/tourrequest/" + data.tourId + "'>";
+				}
+					html+='<div class="row">'
+						html+='<div class="col-md-2 col-lg-1">'
+							html+='<i class="img-noti far fa-bell"></i></div>'
+						html+='<div class="col-md-10 col-lg-11">'
+							html+='<span class="description">'
+								html+= data.content
+								html+='<br>'
+								var createdAt = new Date(data.createdAt);
+								var date = createdAt.getDate() + "";
+								date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
+								date += " " + createdAt.getHours() + ":" + createdAt.getMinutes();
+								html += '<span>' + date + '</span>';
+							html+='</span></div></div>'
+				if (data.type == "tour_invite_join")
+				{
+					html += "</a>";
+				}
 				if (data.type == "new_comment" || data.type == "photo_liked")
+				{
+					html += "</a>";
+				}
+				if (data.type == "tour_join_request" || data.type == "tour_invite_join")
 				{
 					html += "</a>";
 				}
@@ -111,6 +145,7 @@
 			formData.append("accessToken", localStorage.getItem("accessToken"));
 			ajax.send(formData);
         }
+
 </script>
 
 <%- include ("includes/footer") %>

@@ -1,3 +1,12 @@
+@media only screen and (max-width: 767px) {
+    .card{
+        padding: 0;
+        min-width: 0 !important;
+    }
+}
+
+
+
 .nav-link, .nav-item {
     padding: 0 .75rem;
     min-width: 2rem;
@@ -146,9 +155,9 @@ li .suggest.active{
 }
 
 
-.card{
+.padxxx .card{
     padding: 0;
-    min-width: 628px !important;
+    min-width: 628px;
 }
 .card-img, .card-img-top {
     border-radius: 0;

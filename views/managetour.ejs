@@ -1,27 +1,27 @@
 <link rel="stylesheet" href="/public/css/profile.css">
 <!-- <link rel="stylesheet" href="/public/css/home.css"> -->
 <link rel="stylesheet" href="/public/css/tour.css">
+<link rel="stylesheet" href="/public/css/blog.css">
 <%- include ("includes/header") %>
-<div class="container hidden-xs container-custom">
+<div class="container container-custom">
     <div class="col-md-12 form-group" style="padding-top: 10px;">
         <span class="title">Trang chủ/ Quản lý lịch trình</span>
     </div>
     <div class="row">
-        <div class="col-md-10">
+        <div class="col-12 col-md-10">
             <a href="" class="nav-link pr-0 leading-none">
                 <span class="avatar" style="background-image: url(/public/img/dalat.jpeg)"></span>
                 <span class="col-md-8">
                     <span name="user-name" class="user-name text-default">
-                        Nguyễn Hoàng Tuấn
+                        
                     </span>
                     <div class="row">
                         <small class="text-muted col-md-6 col-lg-4 d-block mt-1">0 đang theo dõi</small>
-                        <small class="text-muted col-md-6 col-lg-4 d-block mt-1">0 người theo dõi</small>
                     </div>
                 </span>
             </a>
         </div>
-        <div class="col-md-2">
+        <div class="col-12 create-tour col-md-2">
             <a style="text-decoration: none;" onclick="prepareToCreateTour();">
                 <button class="button button-custom">
                     Tạo tour
@@ -41,21 +41,9 @@
     </div>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="manage" role="tabpanel" aria-labelledby="home-tab">
-            <div class="container hidden-xs container-custom">
+            <div class="container container-custom">
                 <div class="row" id="allTours">
-                    <!-- <div class="form-group blog-review pt">
-                        <a href="#" class="pad media-1" data-fancybox="gallery">
-                            <img src="public/img/saigon.jpeg" alt="Image" class="img-fluid-home">
-                            <div class="media-1-content">
-                                <span class="category">
-                                    Sài Gòn - Đà lạt bắt đầu từ ngày 1/1 - 5/1
-                                </span>
-                            </div>
-                        </a>
-                        <div class="title">
-                            <span>Sài Gòn - Đà lạt</span>
-                        </div>
-                    </div> -->
+
                 </div>
             </div>
         </div>
@@ -77,6 +65,10 @@
 </div>
 <%- include ("includes/footer") %>
 <script>
+    var isUpdateProfile = true;
+    function showProfileData() {
+        document.querySelector(".user-name").innerHTML = window.user.name;
+    }
     var currentTab = 0; // Current tab is set to be the first tab (0)
     function nextPrev(n) {
         // This function will figure out which tab to display
@@ -151,6 +143,42 @@
         x[n].className += " active";
     }
 
+    function deleteTour(a){
+        var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/deleteTour", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
+                console.log(response);   
+                if (response.status == "success") {
+                    Swal.fire({
+                    title: 'Congratulations!',
+                    text: 'Bạn đã xóa tour thành công',
+                    icon: 'success',
+                    timer: 2500
+                    });
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2500); 
+                }
+                else{
+                    Swal.fire({
+                    title: 'Error!',
+                    text: response.message,
+                    icon: 'error',
+                    timer: 2500
+                    });
+                }
+            }
+        }
+        var formData = new FormData();
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        var id= a.id
+        formData.append("_id", id);
+        console.log(id)
+		ajax.send(formData);
+    }
     var isTours = true;
     function getTours(){
         var ajax = new XMLHttpRequest();
@@ -178,6 +206,7 @@
                         html+='<div class="title">'
                             html+= data.diemBatDau + ' - ' + data.diemKetThuc;
                         html+='</div>'
+                        html+='<i title="Xin vào phượt cùng" class="far fa-trash-alt" href="javascript:void(0);" id="'+ data._id +'"onclick="deleteTour(this);"> Xóa tour</i>';
                     html+='</div>'
                 }
                 document.getElementById('allTours').innerHTML = html;
@@ -210,6 +239,14 @@
                             <br>
                             <input type="text" name="diemBatDau" class="input-field pad" placeholder="Địa điểm bắt đầu">
                             <input type="text" name="diemKetThuc" class="input-field" placeholder="Địa điểm kết thúc">
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12 fileContainer">
+                                <i class="fa fa-image"></i>
+                                <input type="file" name="image" accept="image/*" onchange="previewPostImage(this);">
+                                <img class="col-md-6" id="post-img-preview" style="display: none; width: 50px;">
+                                <span>Thêm hình để mọi người dễ dàng tìm kiếm</span>
+                            </div>
                         </div>
                     </div>
                     <div class="tab form-group">

@@ -1,6 +1,26 @@
-
+@media only screen and (max-width: 767px) {
+    .hidden-xs{
+        display: none;
+    }
+    .dropdown-menu.show{
+        min-width: 14rem;
+        font-size: 14px;
+        transform: none !important;
+        top: 34px !important;
+        left: -200px !important;
+    }
+ }
+ @media only screen and (min-width: 1025px) {
+    .noti{
+        margin-left: -40px;
+    }
+    .ava{
+        margin-left: -35px;
+    }
+ }
 .custom-header{
     margin-top: 20px;
+    margin-bottom: 20px;
 }
 .input-location{
     background-color: #f9f9f9;
@@ -70,12 +90,6 @@
 }
 
 
-@media only screen and (max-width: 767px) {
-   .hidden-xs{
-       display: none;
-   }
-}
-
 .button {
     display: inline-block;
     min-width: 100px;
@@ -110,15 +124,15 @@
     display: inline-block;
     min-width: 100px;
     padding: 0 20px;
-    height: 40px;
-    line-height: 36px;
-    border-radius: 40px;
+    /* height: 40px; */
+    /* line-height: 36px; */
+    /* border-radius: 40px; */
     font-size: 12px;
     letter-spacing: 0.065em;
     text-transform: uppercase;
     font-weight: 600;
     /* font-family: Montserrat, Helvetica, sans-serif; */
-    background-color: transparent;
+    background-color: #f9f9f9;
     border: 2px solid transparent;
     cursor: pointer;
     color: #333435;
@@ -131,12 +145,12 @@
     max-height: 10px;
 }
 
-.dropdown-menu.show{
+.main-menu .dropdown.show .dropdown-menu.show{
     min-width: 14rem;
     font-size: 14px;
-    transform: none !important;
-    top: 34px !important;
-    left: 15px !important;
+    transform: none;
+    top: 34px;
+    left: 15px ;
 }
 
 .img-logo{

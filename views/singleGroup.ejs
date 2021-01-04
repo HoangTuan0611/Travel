@@ -7,45 +7,21 @@
         <span class="title" id="title"></span>
     </div>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12 col-lg-8">
             <div class="card padxx">
                 <div class="card-body">  
-                    <a href="" class="nav-link pr-0 leading-none">
+                    <a href="" class="nav-link pad pr-0 leading-none">
                         <img id="avatar" class="avatar"></img>
-                        <span class="col-md-10">
+                        <span class="col-12 col-md-10">
                             <span id="name-location" class="text-default"></span>
                             <div class="row">
                                 <small class="text-muted col-md-6 col-lg-4 d-block mt-1">26 reviews</small>                                
                             </div>
                         </span>
-                        <span id="ismember" class="col-md-2">
-                            
-                        </span>
                     </a>
-                    <div class="row review">
-                        <div class="text-muted col-md-2">
-                            Thức ăn: 8.00
-                        </div>
-                        <div class="text-muted col-md-3">
-                            Không gian: 8.00
-                        </div>
-                        <div class="text-muted col-md-2">
-                            Giá: 8.00
-                        </div>
-                        <div class="text-muted col-md-2">
-                            Dịch vụ: 8.00
-                        </div>
-                    </div>
                     <div class="line"></div>
                     <div class="row review">
-                        <div class="col-md-1">
-                            <i class="fa fa-clock-o" aria-hidden="true"></i>
-                        </div>                        
-                        <span class="time">Giờ hoạt động: 24/7</span>
-                    </div>
-                    <div class="line"></div>
-                    <div class="row review">
-                        <div class="col-md-1">
+                        <div class="col-md-1 col-2">
                             <i class="fa fa-map-marker" aria-hidden="true"></i>
                         </div>                        
                         <span id="description" class="time"></span>
@@ -88,10 +64,10 @@
             html+='</div>';
             html+='<div class="col-md-12 form-group">'
                 html+='<div class="row"> '
-                    html+='<div class="col-md-2">'
+                    html+='<div class="col-md-4 col-lg-2">'
                         html+='<label for="">Add to Your Post</label>'
                     html+='</div>'  
-                    html+='<div class="col-md-10 form-control form-group">';
+                    html+='<div class="col-lg-10 col-md-8 form-control form-group">';
                         html+='<div class="row">'
                             html+='<div class="col-md-5 fileContainer">'
                                 html+='<i class="fa fa-image"></i>'
@@ -129,23 +105,6 @@
                 document.getElementById("avatar").setAttribute("src", mainURL +"/"+response.data.coverPhoto);
                 document.getElementById("name-location").innerHTML=response.data.name;
                 document.getElementById("description").innerHTML=response.data.additionalInfo;
-                console.log(response);
-                var isMember = false;
-                for(var a=0;a<response.data.members.length;a++){
-                    var member = response.data.members[a];
-                    var textfollow = "";
-                    if (member._id.toString()==user._id.toString()){
-                        isMember = true;
-                        textfollow+='<a href="javascript:void(0);"data-id="'+ response.data._id +'"onclick="toggleJoinGroup(this);"class="add-butn btn-unfriend">Leave</a>';
-                        document.getElementById("ismember").innerHTML = textfollow;
-                        break;
-                    }
-                    else{
-                        textfollow+='<a href="javascript:void(0);"data-id="'+ response.data._id +'"onclick="toggleJoinGroup(this);"class="add-butn">Join</a>';
-                        document.getElementById("ismember").innerHTML = textfollow;
-
-                    }
-                }
 
                 var title ="";
                 title+="Trang chủ/ ";
@@ -239,11 +198,12 @@
                                             // 
                                         html += '<form method="post" onsubmit="return doPostComment(this);">';
                                             html+='<div class="row">';
-                                                html+='<div class="comment col-md-10">';
+                                                html+='<div class="comment col-8 col-md-10">';
                                                     html += '<input type="hidden" name="_id" value="' + data._id + '">';
+                                                    html += '<input type="hidden" id="type" name="type" value="' + data.type + '">';
                                                     html+='<input type="text" name="comment" class="input-field" placeholder="Viết bình luận">';
                                                 html+='</div>';
-                                                html+='<div class="col-md-2">';
+                                                html+='<div class="col-2 col-md-2">';
                                                     html += '<button class="postcmt" type="submit">Post</button>';
                                                 html+='</div>';
                                             html+='</div>';

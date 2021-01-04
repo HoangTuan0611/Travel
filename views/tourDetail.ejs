@@ -1,12 +1,14 @@
 <link rel="stylesheet" href="/public/css/profile.css">
 <link rel="stylesheet" href="/public/css/tour.css">
+<script src="/public/js/socket.io.js"></script>
+<link rel="stylesheet" type="text/css" href="/public/css/inbox.css">
 <%- include ("includes/header") %>
-<div class="container hidden-xs container-custom">
+<div class="container container-custom">
     <div class="col-md-12 form-group" style="padding-top: 10px;">
         <span class="title">Trang chủ/ Quản lý lịch trình</span>
     </div>
     <div class="row">
-        <div class="col-md-10">
+        <div class="col-12 col-md-10">
             <a href="" class="nav-link pr-0 leading-none">
                 <span class="avatar" style="background-image: url(/public/img/dalat.jpeg)"></span>
                 <span class="col-md-8">
@@ -15,12 +17,11 @@
                     </span>
                     <div class="row">
                         <small class="text-muted col-md-6 col-lg-4 d-block mt-1">0 đang theo dõi</small>
-                        <small class="text-muted col-md-6 col-lg-4 d-block mt-1">0 người theo dõi</small>
                     </div>
                 </span>
             </a>
         </div>
-        <div class="col-md-2">
+        <div class="col-12 create-tour col-md-2">
             <a style="text-decoration: none;" onclick="prepareToCreateTour();">
                 <button class="button button-custom">
                     Tạo tour
@@ -39,11 +40,19 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="profile-tab" data-toggle="tab" href="#note" role="tab" aria-controls="profile" aria-selected="false">Ghi chú</a>
             </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#chat" role="tab" aria-controls="profile" aria-selected="false">Thảo luận</a>
+            </li>
         </ul>
     </div>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="team" role="tabpanel" aria-labelledby="home-tab">
-            <div class="container hidden-xs container-custom">
+            <div class="container container-custom">
+                <a style="text-decoration: none;" onclick="prepareToAddMember();">
+                    <button class="padxx button button-custom">
+                        Thêm thành viên
+                    </button>
+                </a>
                 <div class="row" id="teamInfo">
                     <div class="form-group col-md-12">
                         <label for="">Tên chuyến đi: </label>
@@ -105,6 +114,37 @@
                         </div>
                         <div id="ghichu-total" class="row">
 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="chat" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="container-custom">
+                <div class="col-md-12">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="conversation-head text-default" id="conversation-head">
+                                            <%= tour.tenChuyenDi %>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="chatting-area" id="chatting-area"></ul>
+                                    </div>
+                                    <div class="card-footer">
+                                        <form class="row" method="post" onsubmit="return doSendTourMessage(this);">
+                                            <input style="border-bottom: 0;" class="col-md-10 input-field" name="message" type="text" placeholder="Reply" required>
+                                            <button type="submit" class="buttonsend col-md-2" title="send">
+                                                <i class="fa fa-paper-plane"></i>
+                                                
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -233,7 +273,7 @@
     function showTourDetail(){
         var tour = document.getElementById("tour-data").value;
         tour = JSON.parse(tour);
-        console.log(tour);
+        // console.log(tour);
         var html= "";
         var text = "";
         var follow = "";
@@ -241,29 +281,24 @@
             var data = tour.members[a];
             if(data.status == "Pending"){
                 html+='<div class="row">'
-                    html+= '<span class="col-md-4 padxxx">' + data.name +'</span>';
-                    html += '<a style="margin-right: 20px;text-decoration: none;" class="col-lg-2 friend" href="javascript:void(0);" data-id="' + data._id + '" tourId="' + tour._id + '" onclick="doAcceptTour(this);" title="Accept">Accept</a>';
-                    html += '<a style="margin-right: 20px;text-decoration: none;" class="col-lg-2 friend" href="javascript:void(0);" data-id="' + data._id + '" tourId="' + tour._id + '" onclick="doRejectTour(this);" title="Reject">Reject</a>';
-                    
+                    html+= '<span class="col-md-4 col-4 padxxx">' + data.name +'</span>';
+                    html += '<a style="margin-right: 20px;text-decoration: none;" class="col-lg-2 col-2 friend" href="javascript:void(0);" data-id="' + data._id + '" tourId="' + tour._id + '" onclick="doAcceptTour(this);" title="Accept">Accept</a>';
+                    html += '<a style="margin-right: 20px;text-decoration: none;" class="col-lg-2 col-2 friend" href="javascript:void(0);" data-id="' + data._id + '" tourId="' + tour._id + '" onclick="doRejectTour(this);" title="Reject">Reject</a>';
                 html+='</div>'
             }
             else{
                 html+='<div class="row">'
                     html+= '<span class="col-md-4 padxxx">' + data.name +'</span>';
-                    html += '<a style="margin-right: 20px;text-decoration: none;" class="col-lg-2 friend" href="javascript:void(0);" data-id="' + data._id + '" tourId="' + tour._id + '" onclick="doKick(this);" title="Kick">Kick</a>';
+                    html += '<a style="margin-right: 20px;text-decoration: none;" class="col-lg-2 col-2 friend" href="javascript:void(0);" data-id="' + data._id + '" tourId="' + tour._id + '" onclick="doKick(this);" title="Kick">Kick</a>';
                 html+='</div>'
             }
         }
         if(tour.lichTrinh){
-            for (var a = 0; a < tour.lichTrinh.length; a++) {
-                var data = tour.lichTrinh[a];
-                text+= '<div class="col-md-6 pad">';
-                    text+= '<label>' + data.tieude + ' </label>';
-                    text+='<br>'
-                    text+= '<span>' + data.noidung + ' </span>';
-                text+= '</div>';
-            
-            }
+            text+=' <div class="form-group col-md-12">'
+                text+='<label for="">Ghi chú: </label>'
+                text+='<br>'
+                text+='<span style=" white-space: pre-line; word-break: break-word;">' + tour.lichTrinh + '</span>'
+                text+='</div>'
         }
         else{
             text+='<span>Chưa có lịch trình cụ thể! Hãy tạo thêm lịch trình bạn nhé!</span>'
@@ -272,7 +307,7 @@
             follow+=' <div class="form-group col-md-12">'
                 follow+='<label for="">Ghi chú: </label>'
                 follow+='<br>'
-                follow+='<span>' + tour.ghiChu + '</span>'
+                follow+='<span style=" white-space: pre-line; word-break: break-word;">' + tour.ghiChu + '</span>'
             follow+='</div>'
         }
         else{
@@ -408,6 +443,212 @@
         formData.append("_id",_id);
         ajax.send(formData);
     }
+
+    function doEditTourDetail(form){
+        var _id = document.getElementById('_id').value;
+        var idlichtrinh = document.getElementById('id').value;
+        alert(idlichtrinh);
+        alert(_id);
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/editLichTrinh", true);
+        ajax.onreadystatechange = function(){
+            if (this.readyState == 4 && this.status == 200){
+                var response = JSON.parse(this.responseText);
+                console.log(response);
+                if(response.status =="success"){
+                    Swal.fire({
+                        title: 'Congratulations!',
+                        text: 'Bạn đã tạo lịch trình thành công',
+                        icon: 'success',
+                        timer: 1500
+                    })
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1500); 
+                }
+            }
+        };
+        var formData = new FormData(form);
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        formData.append("_id",_id);
+        formData.append("idlichtrinh", idlichtrinh);
+        alert(idlichtrinh);
+        alert(_id);
+        return;
+        ajax.send(formData);
+    }
+
+    function SearchFr(){
+        var tour = document.getElementById("tour-data").value;
+        tour = JSON.parse(tour);
+        console.log(tour);
+        var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/search", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var response = JSON.parse(this.responseText);
+                console.log(response);
+				if (response.status == "success") {
+                    var html = "";
+					for (var a = 0; a < response.data.length; a++) {
+						var data = response.data[a];
+
+						if (data._id == window.user._id) {
+							continue;
+                        }
+                        var isFriend = false;
+                        for (var b = 0;b < tour.members.length; b++){
+                            var tempData = tour.members[b];
+                            if(tempData._id == data._id) {
+                                isFriend = true;
+                                break;
+                            }
+                        }
+                        html+='<div class="row padx">';
+                            html+='<i style="padding-top: 7px;" class="col-2 col-md-2 fas fa-user"></i>';
+                            html += '<h4 class="col-10 col-md-10">';
+                                html += '<a href="/user/' + data.username + '">' + data.name + '</a>';
+                                if (isFriend) {
+                                        html += '<a href="javascript:void(0);" tourId="' + tour._id + '" data-id="' + data._id + '"onclick="doUnfriend(this);" style="float:right; text-decoration: none;" class="add-butn button btn-unfriend">Kick</a>';
+                                    } 
+                                else {
+                                        html += '<a href="javascript:void(0);" tourId="' + tour._id + '" data-id="' + data._id + '"onclick="sendInviteJoinTour(this);" style="float:right; text-decoration: none;" class="add-butn button">Add</a>';
+                                    }
+                            html += '</h4>';
+						html+='</div>'
+                    }
+                    document.getElementById('search-results-tour').innerHTML = html;
+
+				} else {
+					alert(response.message);
+				}
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("query", document.getElementById("query").value);
+		ajax.send(formData);
+    }
+
+    function sendInviteJoinTour(self){
+        var _id = self.getAttribute("data-id");
+        var tourid = self.getAttribute("tourId");
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/sendInviteJoinTour",true);
+        ajax.onreadystatechange = function(){
+            if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
+                alert(response.message);
+                self.remove();
+            }
+        };
+        var formData = new FormData();
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        formData.append("_id",_id);
+        formData.append("tourid",tourid);
+        ajax.send(formData);
+    }
+
+    // Chat 
+    var isChatTour = true;
+    function getChatTour() {
+        var _id = document.getElementById('_id').value;
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/getTourChat",true);
+        ajax.onreadystatechange = function(){
+            if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
+                console.log(response);
+                var html ="";
+                if(response.data.length == 0){
+                    html+='<span>Chưa có tin nhắn nào</span>';
+                }
+                else{
+                    for (var a =0;a< response.data.length;a++){
+                    var inbox = response.data[a];
+                    if (inbox.from == window.user._id) {
+                        html += '<li class="me">';
+                            html += '<div class="mess-item">' + inbox.name + ' : ' +  inbox.message + '</div>';
+                        html += '</li>';
+                    } else {
+                        html += '<li class="you">';
+                            html += '<div class="mess-item">' + inbox.name + ' : ' + inbox.message + '</div>';
+                        html += '</li>';
+                    }
+                }
+                }
+                document.getElementById("chatting-area").innerHTML = html;
+
+                var objDiv = document.getElementById("chatting-area");
+                objDiv.scrollTop = objDiv.scrollHeight;
+            }
+        };
+        var formData = new FormData();
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        formData.append("_id",_id);
+        ajax.send(formData);
+    }
+
+    function doSendTourMessage(form) {
+        var message = form.message.value;
+        var _id = document.getElementById('_id').value;
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/sendTourMessage", true);
+
+        ajax.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
+
+                if(response.status == "success") {
+                    var html = "";
+
+                    html += '<li class="me">';
+                        html += '<div class="mess-item">' + window.user.name + ' : ' + message + '</div>';
+                    html += '</li>';
+
+                    document.getElementById("chatting-area").innerHTML += html;
+                    form.message.value = "";
+
+                    var objDiv = document.getElementById("chatting-area");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                }
+            }
+        };
+        var formData = new FormData(form);
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        formData.append("_id", _id);
+        ajax.send(formData);
+        return false;
+    }
+    function connectSocket() {
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/connectSocket", true);
+
+        ajax.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
+
+                socketIO.on("messageTourReceived", function(messageObj){
+                    if (selectedFriend != null && messageObj.from == selectedFriend._id) {
+                        var html = "";
+
+                        html += '<li class="you">';
+                            html += '<div class="mess-item">'+ messageObj.message + '</div>';
+                        html += '</li>';
+
+                        document.getElementById("chatting-area").innerHTML += html;
+
+                        var objDiv = document.getElementById("chatting-area");
+                        objDiv.scrollTop = objDiv.scrollHeight;
+                    }
+                });
+            }
+        };
+        var formData = new FormData();
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        ajax.send(formData);
+    }
 </script>
 <div class="modal fade" id="createTour" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog">
@@ -496,7 +737,7 @@
                             <label for="">Ghi chú</label>
                             <br>
                             <input id="_id" value="<%= tour._id %>" type="hidden">
-                            <textarea class="form-control" name="ghiChu" id="ghiChu" cols="30" rows="10" placeholder="Ghi chú (Ví dụ: Tập trung vào lúc 6h sáng tại ký túc xá khu B)"></textarea>
+                            <textarea class="form-control" name="ghiChu" id="ghiChu" cols="30" rows="10" placeholder="Ghi chú (Ví dụ: Tập trung vào lúc 6h sáng tại ký túc xá khu B)"><%= tour.ghiChu %></textarea>
                         </div>
                     </div>
                     <div style="overflow:auto;">
@@ -523,15 +764,9 @@
 				<form id="createNoteTour" onsubmit="return doTourDetail(this)">
                     <div class="form-group">
                         <div class="form-group">
-                            <label for="">Tiêu đề</label>
-                            <br>
-                            <input id="_id" value="<%= tour._id %>" type="hidden">
-                            <input type="text" class="form-control" name="tieude" placeholder="Tiêu đề (Ví dụ: Ngày 1)">
-                        </div>
-                        <div class="form-group">
                             <label for="">Nội dung</label>
                             <br>
-                            <textarea class="form-control" name="noidung" cols="30" rows="10" placeholder="Nội dung (Ví dụ: Sài Gòn - Cần Thơ)"></textarea>
+                            <textarea class="form-control" name="lichtrinh" cols="30" rows="10" placeholder="Lịch trình chi tiết cho chuyến đi (Ví dụ: Ngày 1: Sài Gòn - Cần Thơ tập trung vào lúc xx giờ tại xx địa điểm)"><%= tour.lichTrinh %></textarea>
                         </div>
                     </div>
                     <div style="overflow:auto;">
@@ -540,6 +775,67 @@
                         </div>
                     </div>
 				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="addMember" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Thêm thành viên</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+                <div class="form-group">
+                    <div class="form-group">
+                        <label for="">Đến: </label>
+                        <br>
+                        <form onsubmit="return false">
+                            <div class="row col-12">
+                                <input type="text" class="col-lg-9 col-7 col-md-8 form-control-custom" id="query" placeholder="Nguyễn Hoàng Tuấn,...">
+                                <button class="col-md-4 col-4 col-lg-2 buttonsearch" type="submit" onclick="SearchFr(this)">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>  
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <ul class="col-md-12 nav" id="myTab" role="tablist" style="justify-content: space-around;">
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#suggest" role="tab" aria-controls="home" aria-selected="true">Đề nghị</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="profile" aria-selected="false">Bạn bè</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="suggest" role="tabpanel" aria-labelledby="home-tab">
+                                <div class="container container-custom">
+                                    <div id="search-results-tour">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="friends" role="tabpanel" aria-labelledby="profile-tab">
+                                <div class="container container-custom">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="overflow:auto;">
+                    <div style="float:right;">
+                        <button type="submit" class="button button-custom">Hoàn thành</button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>

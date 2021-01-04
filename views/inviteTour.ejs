@@ -1,0 +1,137 @@
+<link rel="stylesheet" href="/public/css/main.css">
+<link rel="stylesheet" href="/public/css/category.css">
+<%- include ("includes/header") %>
+<div class="container container-customer">
+    <div class="col-md-12 form-group" style="padding-top: 10px;">
+        <span class="title">Trang chủ/ Những lời mời từ các Tour</span>
+    </div>
+    <div class="col-md-11 offset-md-1 form-group">
+        <div class="row" id="allSaved">
+        </div>
+    </div>
+    <input type="hidden" id="tour-data" value="<%= JSON.stringify(tour); %>">
+</div>
+<script>
+    var isgetallTour = true;
+    function getallTour() {
+        var data = document.getElementById("tour-data").value;
+        data = JSON.parse(data);
+        console.log(data);
+        var html= "";
+        html+='<div class="card padxx col-md-12">';
+            html+='<div class="card-body">'
+                html+='<a style="text-decoration: none !important;" href="#">'
+                    html+='<div class="row">'
+                        html+='<div class="col-md-3 col-4 col-lg-2">'
+                            html+='<img class="img-savepost" src="' + mainURL + '/' + data.image + '" alt="">'
+                        html+=' </div>'
+                        html+=' <div class="col-md-7 col-8 col-lg-8">'
+                            html+='<span class="text-default">'
+                                html+= data.user.name
+                            html+='</span>'
+                            html+='<br>'
+                            html+='<span class="text-default">'
+                                html+=data.diemBatDau + ' đi ' + data.diemKetThuc + ' từ ' + data.thoiGianBatDau + ' đến ' + data.thoiGianKetThuc
+                            html+='</span>'
+                            html+='<small class="text-muted mt-1 description">'
+                                html+= 'Chi phí: ' + data.chiPhi + '. Phương tiện chủ yếu: ' + data.phuongTien;
+                                html+= '<br>';
+                                html+= 'Ghi chú: ' + data.ghiChu;
+                            html+='</small>'
+                            html+='<div class="col-md-12 row">'
+                                html += '<a style="margin-right: 20px; text-decoration: none;" class="friend" href="javascript:void(0);" data-id="' + user._id + '" tourId="' + data._id + '" onclick="doAcceptTour(this);" title="Accept">Accept</a>';
+                                html += '<a style="text-decoration: none;" class="friend" href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinTour(this);" title="Reject">Reject</a>';
+                            html+=' </div>'
+                        html+=' </div>'
+                    html+=' </div>'
+                html+='</a>'
+            html+=' </div>'
+        html+=' </div>'
+
+        document.getElementById('allSaved').innerHTML = html;
+
+    }
+
+    function doAcceptTour(self){
+        var userid = self.getAttribute("data-id");
+        var tourid = self.getAttribute("tourId");
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST","/acceptInviteJoinTour", true);
+        ajax.onreadystatechange = function(){
+            if (this.readyState == 4 && this.status == 200){
+                var response = JSON.parse(this.responseText);
+                if(response.status =="success"){
+                    Swal.fire({
+                        title: 'Congratulations!',
+                        text: 'Chấp nhận chuyến đi thành công',
+                        icon: 'success',
+                        timer: 1500
+                    })
+                }
+                else{
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.message,
+                        icon: 'error',
+                        timer: 1500
+                    })
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1500); 
+                }
+                self.remove();
+            }
+        };
+        var formData = new FormData();
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        formData.append("userid", userid);
+        formData.append("tourid", tourid);
+        ajax.send(formData);
+    }
+
+    function toggleJoinTour(self){
+            var ajax = new XMLHttpRequest();
+            ajax.open("POST","/toggleJoinTour",true);
+
+            ajax.onreadystatechange=function(){
+                if (this.readyState==4&&this.status==200){
+                    var response = JSON.parse(this.responseText);
+
+                    if(response.status=="success"){
+                        self.className = "add-butn btn-unfriend";
+                        self.innerHTML = "Leave";
+                        Swal.fire({
+                            title: 'Congratulations!',
+                            text: 'Bạn đã tham gia nhóm thành công',
+                            icon: 'success',
+                            timer: 2500
+                        })
+                    }
+                    if (response.status == "leaved"){
+                        self.className = "add-butn";
+                        self.innerHTML = "Join";
+                        Swal.fire({
+                            title: 'Congratulations!',
+                            text: 'Bạn đã rời nhóm thành công',
+                            icon: 'success',
+                            timer: 2500
+                        })
+                    }
+
+                    if (response.status == "error") {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message,
+                            icon: 'error',
+                            timer: 2500
+                        })
+                    }
+                }
+            };
+            var formData = new FormData();
+            formData.append("accessToken",localStorage.getItem("accessToken"));
+            formData.append("_id", self.getAttribute("data-id"));
+            ajax.send(formData);
+        }
+</script>
+<%- include ("includes/footer") %>

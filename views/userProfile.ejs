@@ -144,7 +144,7 @@
                                     html+='<span class="avatar" style="background-image: url(/public/img/dalat.jpeg)"></span>';
                                     html+='<span class="col-md-8">';
                                         html+='<span class="name" name="name" class="text-default">' ;
-                                        html += window.user.name;
+                                        html += response.name;
                                         html+='</span>';
                                         var createdAt = new Date(data.createdAt);
                                         var date = createdAt.getDate() + "";
@@ -218,6 +218,7 @@
                                         html+='<div class="row">';
                                             html+='<div class="comment col-md-10">';
                                                 html += '<input type="hidden" name="_id" value="' + data._id + '">';
+                                                html += '<input type="hidden" id="type" name="type" value="' + data.type + '">';
                                                 html+='<input type="text" name="comment" class="input-field" placeholder="Viết bình luận">';
                                             html+='</div>';
                                             html+='<div class="col-md-2">';

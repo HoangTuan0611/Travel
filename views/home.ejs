@@ -9,7 +9,7 @@
     </head>
     <body>
         <%- include ("includes/header") %>
-        <div class="container hidden-xs container-custom">
+        <div class="container container-custom">
             <div class="row">
                 <div class="col-md-12 padxx header-title">
                     <span class="header-title">Hôm nay đi đâu - Để Explore lo</span>
@@ -59,7 +59,7 @@
                     </div>
                 </div>
                 <div class="col-md-12 padxx header-title">
-                    <span class="header-title">Những chuyến đi sắp diễn ra</span>
+                    <a title="Danh sách all Tour" class="header-title" style="color: #000;" href="/allTour">Những chuyến đi sắp diễn ra</a>
                 </div>
                 <div class="container padxxx">
                     <div class="row" id="showAllTour">
@@ -121,7 +121,7 @@
                 <div class="col-md-12 header-title">
                     <span class="header-title">Đề xuất</span>
                 </div>
-                <div class="col-md-12 nav-table">
+                <div class="col-md-12 hidden-xs nav-table">
                     <ul class="col-md-12 nav" id="myTab" role="tablist">
                         <li class="nav-item" role="presentation">
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#all" role="tab" aria-controls="home" aria-selected="true">Tất cả</a>
@@ -302,415 +302,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="container visible-xs container-custom">
-            <div class="row">
-                <div class="col-md-12 header-title" style="padding-top: 0;">
-                    <span class="header-title">Hôm nay đi đâu? Để Explore lo</span>
-                </div>
-                <div class="col-md-12">
-                    <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
-                        <!-- Wrapper for slides -->
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <div class="row row-custom">
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/vungtau.jpg" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Vũng tàu</span>
-                                        <p class="card-text">10 bài viết</p>
-                                        </div>
-                                    </div>
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/dalat.png" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Đà lạt</span>
-                                        <p class="card-text">15 bài viết</p>
-                                        </div>
-                                    </div>
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/nhatrang.jpg" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Nha trang</span>
-                                        <p class="card-text">10 bài viết</p>
-                                        </div>
-                                    </div>
-                                    <div class="card-mb hidden-tab col-6 form-group col-lg-2 col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/phanthiet.jpg" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Phan Thiết</span>
-                                        <p class="card-text">10 bài viết</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <div class="row row-custom">
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                            <img class="card-img-top" src="public/img/vungtau.jpg" alt="Card image cap">
-                                            <div class="card-body">
-                                            <span class="card-title">Vũng tàu</span>
-                                            <p class="card-text">10 bài viết</p>
-                                            </div>
-                                    </div>
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                            <img class="card-img-top" src="public/img/dalat.png" alt="Card image cap">
-                                            <div class="card-body">
-                                            <span class="card-title">Đà lạt</span>
-                                            <p class="card-text">15 bài viết</p>
-                                            </div>
-                                    </div>
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/nhatrang.jpg" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Nha trang</span>
-                                        <p class="card-text">10 bài viết</p>
-                                        </div>
-                                    </div>
-                                    <div class="card-mb form-group col-6 col-lg-2 hidden-tab col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/phanthiet.jpg" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Phan Thiết</span>
-                                        <p class="card-text">10 bài viết</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Left and right controls -->
-                        <a class="hidden-xs carousel-control-prev" href="#myCarousel" data-slide="prev">
-                            <svg style="color: black;height: 20px;width: 20px;" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
-                            </svg>
-                        </a>
-                        <a class="hidden-xs carousel-control-next" href="#myCarousel" data-slide="next">
-                            <svg style="color: black;height: 20px;width: 20px;" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"></path>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-12 header-title">
-                    <span class="header-title">Coffee</span>
-                </div>
-                <div class="col-md-12">
-                    <div id="Category" class="carousel slide" data-ride="carousel" data-interval="false">
-                        <!-- Wrapper for slides -->
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <div class="row row-custom">
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/cfhenho.jpeg" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Cà phê hẹn hò</span>
-                                        <p class="card-text">10 bài viết</p>
-                                        </div>
-                                    </div>
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/cfdocsach.jpeg" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Cà phê đọc sách</span>
-                                        <p class="card-text">10 bài viết</p>
-                                        </div>
-                                    </div>
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/cafe24.jpeg" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Cà phê 24/24</span>
-                                        <p class="card-text">10 bài viết</p>
-                                        </div>
-                                    </div>
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/cfsongao.jpeg" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Cà phê sống ảo</span>
-                                        <p class="card-text">10 bài viết</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <div class="row row-custom">
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/cfthucung.jpeg" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Cà phê thú cưng</span>
-                                        <p class="card-text">10 bài viết</p>
-                                        </div>
-                                    </div>
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/cfhenho.jpeg" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Cà phê hẹn hò</span>
-                                        <p class="card-text">10 bài viết</p>
-                                        </div>
-                                    </div>
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/cfdocsach.jpeg" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Cà phê đọc sách</span>
-                                        <p class="card-text">10 bài viết</p>
-                                        </div>
-                                    </div>
-                                    <div class="card-mb form-group col-6 col-lg-2 col-md-3" style="width: 18rem;">
-                                        <img class="card-img-top" src="public/img/cafe24.jpeg" alt="Card image cap">
-                                        <div class="card-body">
-                                        <span class="card-title">Cà phê 24/24</span>
-                                        <p class="card-text">10 bài viết</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    
-                        <!-- Left and right controls -->
-                        <a class="hidden-xs carousel-control-prev" href="#Category" data-slide="prev">
-                            <svg style="color: black;height: 20px;width: 20px;" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
-                            </svg>
-                        </a>
-                        <a class="hidden-xs carousel-control-next" href="#Category" data-slide="next">
-                            <svg style="color: black;height: 20px;width: 20px;" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"></path>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-12 header-title">
-                    <span class="header-title">Đề xuất</span>
-                </div>
-                <div class="col-12">
-                    <ul class="row col-md-12">
-                        <li class="col-md-2 col-3 col-lg-1">
-                            <span class="suggest active">
-                                Tất cả
-                            </span>
-                        </li>
-                        <li class="col-md-2 col-3 col-lg-1">
-                            <span class="suggest">
-                                Biển
-                            </span>
-                        </li>
-                        <li class="col-md-2 col-3 col-lg-1">
-                            <span class="suggest">
-                                Núi
-                            </span>
-                        </li>
-                        <li class="col-md-2 col-3 col-lg-1">
-                            <span class="suggest">
-                                Trending
-                            </span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-12">
-                    <div class="row">
-                        <div class="form-group blog-review">
-                            <div class="card">
-                                <div class="card-header">
-                                    <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown" aria-expanded="false">
-                                        <span class="avatar" style="background-image: url(./public/img/dalat.jpeg)"></span>
-                                        <span class="ml-2 d-none d-lg-block">
-                                            <span class="text-default">
-                                                Nguyễn Hoàng Tuấn 
-                                                <button class="btn btn-primary">
-                                                    Theo dõi
-                                                </button>
-                                            </span>
-                                            <small class="text-muted d-block mt-1">20:30 ngày 21/09 tại Đà lạt</small>
-                                        </span>
-                                        <span class="text-default col-8">Nguyễn Hoàng Tuấn</span>
-                                    </a>
-                                </div>
-                                <a style="text-decoration: none;" class="a-custom-header" routerLink="/blog" routerLinkActive="active">
-                                    <img class="card-img-custom" src="./public/img/saigon.jpeg" alt="Card image cap">
-                                </a>
-                                <div class="card-body">
-                                    <div class="col-lg-12">
-                                        <div class="row">
-                                            <div class="like col-4">
-                                                <i class="fa fa-heart-o" aria-hidden="true"></i>
-                                            </div>
-                                            <div class="share">
-                                                <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 form-group">
-                                        <div class="count-like">
-                                            70 lượt thích
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="row">
-                                            <span class="user">
-                                                Nguyễn Hoàng Tuấn
-                                            </span>
-                                            <span class="description col-12">
-                                                SAIGON WATER BUS: Đây là tuyến Xe bus đường sông bắt đầu từ Bến Bạch Đằng (Quận 1, TP HCM) đi Bình an, Thanh Đa, H.B. Chánh và Bến Linh Đông.
                 
-                                                Địa điểm: 10B Tôn Đức Thắng, phường Bến Nghé, Quận 1, TpHCM
-                
-                                                Điểm gửi xe: Từ cổng chào WaterBus, các bạn chạy lên một chút sẽ thấy bãi giữ xe nhé phí 4k
-                                                Giá tiền: 15k cho 1 chặng thôi á. Đi và về là 30k nhé.
-                                                Chú ý: 15k các bạn có thể ghé bến nào cũng dc. Nhớ là xuống bến nào thì khứ hồi phải mua bến đó. Còn không các bạn đến nơi rồi hãy mua vé về. Đừng như mình nha 😂😂 mua khứ hồi thanh đa mà ghé Bình An 🤧
-                
-                                                Có nhiều mốc thời gian khởi hành cho bạn chọn, nhưng theo mình bạn nên đi vào tầm sáng sớm cho mát hoặc đi vào buổi tối để hưởng không khí lãng mạn khi hoàng hôn buông xuống.
-                
-                                                Mình chọn đi từ bến Bạch đằng đến Bình An ( ngay đối diện Landmark 81) tha hồ chụp hình sống ảo 😆😆 có nhiều quán nước lề đường ( mát mẻ, sạch sẽ) để nghỉ ngơi ngắm cảnh sông nước và landmark. Giá cũng ko rẻ lắm ạ hihi ( 2 dừa, 2 lon nc ngọt 113k)
-                
-                                                Khi đi Water Bus bạn sẽ có cơ hội ngắm sông Sài Gòn trọn vẹn nhất cùng những tòa nhà cao tầng đơn cử là toà Landmark rất thơ mộng và mát mẻ. Một trải nghiệm thú vị 👍👍
-                                                #saigonwaterbus
-                                                #checkinsaigon
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="col-12">
-                                        <div class="row">
-                                            <div class="comment col-10">
-                                                <input type="text" class="input-field" placeholder="Viết bình luận">
-                                            </div>
-                                            <div class="col-2">
-                                                <span class="post">Post</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group blog-review">
-                            <div class="card">
-                                <div class="card-header">
-                                    <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown" aria-expanded="false">
-                                        <span class="avatar" style="background-image: url(./public/img/dalat.jpeg)"></span>
-                                        <span class="ml-2 d-none d-lg-block">
-                                            <span class="text-default">
-                                                Nguyễn Hoàng Tuấn 
-                                                <button class="btn btn-primary">
-                                                    Theo dõi
-                                                </button>
-                                            </span>
-                                            <small class="text-muted d-block mt-1">20:30 ngày 21/09 tại Đà lạt</small>
-                                        </span>
-                                        <span class="text-default col-8">Nguyễn Hoàng Tuấn</span>
-                                    </a>
-                                </div>
-                                <img class="card-img-custom" src="./public/img/dalat.jpeg" alt="Card image cap">
-                                <div class="card-body">
-                                    <div class="col-lg-12">
-                                        <div class="row">
-                                            <div class="like col-4">
-                                                <i class="fa fa-heart-o" aria-hidden="true"></i>
-                                            </div>
-                                            <div class="share">
-                                                <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 form-group">
-                                        <div class="count-like">
-                                            70 lượt thích
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="row">
-                                            <span class="user">
-                                                Nguyễn Hoàng Tuấn
-                                            </span>
-                                            <span class="description col-12">
-                                                Không hổ danh là “thành phố sống ảo”, Đà Lạt hết mực chiều lòng du khách khi liên tục cho ra đời những mô hình du lịch độc đáo mà cứ 1 mét vuông lại có thể cho ra đời nghìn tấm ảnh triệu like. Trong đó phải nhắc đến quán cà phê khiêm luôn homestay “A place like no other” đẹp như mơ và có thể ngắm Đà Lạt trên cao siêu đẹp.
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="col-12">
-                                        <div class="row">
-                                            <div class="comment col-10">
-                                                <input type="text" class="input-field" placeholder="Viết bình luận">
-                                            </div>
-                                            <div class="col-2">
-                                                <span class="post">Post</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group blog-review">
-                            <div class="card">
-                                <div class="card-header">
-                                    <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown" aria-expanded="false">
-                                        <span class="avatar" style="background-image: url(./public/img/vungtau.jpeg)"></span>
-                                        <span class="ml-2 d-none d-lg-block">
-                                            <span class="text-default">
-                                                Nguyễn Hoàng Tuấn 
-                                                <button class="btn btn-primary">
-                                                    Theo dõi
-                                                </button>
-                                            </span>
-                                            <small class="text-muted d-block mt-1">20:30 ngày 21/09 tại Đà lạt</small>
-                                        </span>
-                                        <span class="text-default col-8">Nguyễn Hoàng Tuấn</span>
-                                    </a>
-                                </div>
-                                <img class="card-img-custom" src="./public/img/vungtau_1.jpeg" alt="Card image cap">
-                                <div class="card-body">
-                                    <div class="col-lg-12">
-                                        <div class="row">
-                                            <div class="like col-4">
-                                                <i class="fa fa-heart-o" aria-hidden="true"></i>
-                                            </div>
-                                            <div class="share">
-                                                <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 form-group">
-                                        <div class="count-like">
-                                            70 lượt thích
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="row">
-                                            <span class="user">
-                                                Nguyễn Hoàng Tuấn
-                                            </span>
-                                            <span class="description col-12">
-                                                𝑩𝒂̣𝒏 𝒄𝒐́ 𝒌𝒊̉ 𝒏𝒊𝒆̣̂𝒎 𝒈𝒊̀ 𝒗𝒐̛́𝒊 𝑽𝒖̃𝒏𝒈 𝑻𝒂̀𝒖 𝒌𝒉𝒐̂𝒏𝒈 ?
-                
-                                                Lúc vui, lúc buồn, mệt mỏi chán nản luôn tìm đến đây vì cảm thấy được bình yên ☁️
-                
-                                                💁‍♂️Mình vừa kết thúc chuyến đi Vũng Tàu 2 ngày 1 đêm của mình lần thứ n + 1 rồi, thực sự đến đây không còn là để trải nghiệm đồ ăn hay phong cảnh nữa, chỉ là vì cảm thấy, khi lòng ta buồn thì đến nơi đây như được trút bỏ mọi thứ, yên bình đến lạ, nhắm mắt tận hưởng gió biển thổi vào tóc, vào mắt, vào tay có thể cảm nhận được"hương vị" không nơi nào có được, 1 Vũng Tàu bình yên.
-                
-                                                🤔Khi đến đây điều mình nghĩ bạn nên làm ngay và luôn là đi ăn bánh khọt và lẩu cả đuối nè 🥘🥧 đây là 2 món đặc sản nơi này há há, còn bụng nữa thì ăn cháo lòng dưới chân dốc 🍛, chả hiểu sao ăn thấy ngon kinh khủng luôn🤤
-                
-                                                🥤Về nước uống thì Sơn Đăng quán là sự lựa chọn hợp lí nè, quán được xây trên đường lên Hải Đăng nên quan cảnh rất đẹp, có thể chụp ảnh, sf chỗ này là lung linh 🤩
-                
-                                                🌄Về địa điểm vui chơi thì phải đi leo Tượng chúa để trải nghiệm độ cao nè, ra mũi nghinh phong chụp hình cũng ngầu lắm luôn, tối tối lên hải đăng nhìn cả Vũng Tàu cũng là 1 ý tưởng không tồi 🌌
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="col-12">
-                                        <div class="row">
-                                            <div class="comment col-10">
-                                                <input type="text" class="input-field" placeholder="Viết bình luận">
-                                            </div>
-                                            <div class="col-2">
-                                                <span class="post">Post</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-                </div>
             </div>
         </div>
         <%- include ("includes/footer") %>
@@ -776,8 +368,10 @@
                     var response = JSON.parse(this.responseText);
                     console.log(response);
                     var html="";
+                    var isMember = false;
                     for (var a = 0; a < response.data.length; a++) {
                         var data = response.data[a];
+                        console.log(data);
                         html+='<div class="form-group blog-review pt">'
                             html+='<a href="' + mainURL + "/tour/" + data._id + '" class="pad media-1" data-fancybox="gallery">';
                                 html+='<img src="/public/img/saigon.jpeg" alt="Image" class="img-fluid-home">';
@@ -785,39 +379,31 @@
                                     html+='<span class="category">';
                                         html+='Team: ' + data.tenChuyenDi;
                                         html+='<br>'
-                                        html+='Phượt từ ngày ' + data.thoiGianBatDau + ' đến ngày ' + data.thoiGianKetThuc;
+                                        html+='Phượt từ ' + data.thoiGianBatDau + ' đến ' + data.thoiGianKetThuc;
                                         html+='<br>'
-                                        html+='<span id="ismember"></span>'
-                                        // html+='<a style="text-decoration: none;">'
-                                        //     html+=' <button id="ismember" class="button button-custom"></button>'
-                                        // html+='</a>'
+                                        html+='<span>Nhấn vào icon bên dưới để phượt cùng mình nhé!!!</span>'
                                     html+='</span>'
                                 html+='</div>'
                             html+='</a>'
+                            for (var b = 0; b < data.members.length; b++){
+                                console.log(data.members.length);
+                                console.log(user._id);
+                                var member = data.members[b];
+                                if (member._id.toString() == user._id.toString()){
+                                    isMember = true;
+                                    html+='<i title="Đang trong tour phượt" class="far fa-paper-plane" href="javascript:void(0);" data-id="'+ data._id +'"onclick="toggleJoinTour(this);"> Đang phượt</i>';
+                                    break;
+                                }
+                                if(b == data.members.length - 1){
+                                    html+='<i title="Xin vào phượt cùng" class="far fa-paper-plane" href="javascript:void(0);" data-id="'+ data._id +'"onclick="toggleJoinTour(this);"> Xin vào</i>';
+                                }
+                            }
                             html+='<div class="title">'
                                 html+= data.diemBatDau + ' - ' + data.diemKetThuc;
                             html+='</div>'
                         html+='</div>'
                     }
                     document.getElementById('showAllTour').innerHTML = html;
-                    var isMember = false;
-                    for(var a=0; a < response.data.length; a++){
-                        var data = response.data[a];
-                        for (var b = 0; b < data.members.length; b++){
-                            var member = data.members[b];
-                            var textfollow = "";
-                            if (member._id.toString()==user._id.toString()){
-                                isMember = true;
-                                textfollow+='<a href="javascript:void(0);"data-id="'+ data._id +'"onclick="toggleJoinTour(this);"class="add-butn btn-unfriend">Leave Tour</a>';
-                                document.getElementById("ismember").innerHTML = textfollow;
-                                break;
-                            }
-                            else{
-                                textfollow+='<a href="javascript:void(0);"data-id="'+ data._id +'"onclick="toggleJoinTour(this);"class="add-butn">Join Tour</a>';
-                                document.getElementById("ismember").innerHTML = textfollow;
-                            }
-                        }
-                    }
                 }
             }
             var formData = new FormData();
@@ -869,6 +455,35 @@
             formData.append("_id", self.getAttribute("data-id"));
             ajax.send(formData);
         }
+
+
+        var isCheckLogin = true;
+        function CheckLogin(){
+            setTimeout(function() {
+                $("#mainNote").modal("show");
+            }, 500);	
+        }
     </script>
+    <div class="modal col-12 fade" id="mainNote" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chào mừng bạn đến với website du lịch</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body">
+                    <span>Vui lòng đăng nhập để tiếp tục sử dụng dịch vụ</span>
+                    <a href="/login" class="nav-link pr-0 leading-none">
+                        <button class="button" style="float: right;" type="submit">
+                            Go to Login
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </html>
 

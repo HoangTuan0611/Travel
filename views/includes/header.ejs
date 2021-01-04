@@ -9,7 +9,7 @@
 		<script src="/public/js/socket.io.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 		<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600;700&display=swap" rel="stylesheet">
-		<link href="/public/plugin/fontawesome-free-5.15.1-web/css/all.css" rel="stylesheet"> <!--load all styles -->
+		<link href="/public/plugin/fontawesome-free-5.15.1-web/css/all.css" rel="stylesheet">
 		<script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
@@ -19,33 +19,26 @@
 		<header class="header custom-header">
 			<div class="container">
 				<div class="row">
-					<div class="col-lg-1 col-md-2 hidden-xs">
+					<div class="col-lg-1 col-2 col-md-1">
 						<a href="/">
 							<img class="img-logo" src="/public/img/logo.png" alt="">
 						</a>
 					</div>
-					<div class="col-md-7 col-lg-8">
-						<div class="row form-group input-location">
-							<div class="col-md-3 col-lg-2 col-4" style="border-right: 1px solid #ececec;">
-								<div class="location">
-									Đà lạt
-								</div>
-							</div>
-							<div class="col-md-9 col-lg-10 col-8">
-								<form onsubmit="return false;" class="row form-search">
-				
-										
-										<input class="col-md-10 form-control-custom" type="type" placeholder="Search Friend">
-																
-										<button class="col-md-2 buttonsearch" data-ripple type="button" onclick="onSearch(this);">
-											<i class="fas fa-search"></i>
-										</button>
-									
-								</form>
-							</div>
-						</div>
+					<div class="col-md-5 col-8 col-lg-7 col-xl-8">
+						<form onsubmit="return false;" class="row form-search">
+							<input style="border-radius: 0;" class="col-lg-9 col-7 col-md-8 form-control-custom" type="type" placeholder="Search Friend, Tour,..." required>				
+							<button class="col-md-4 col-4 col-lg-2 buttonsearch" data-ripple type="submit" onclick="onSearch(this);">
+								<i class="fas fa-search"></i>
+							</button>
+						</form>
 					</div>
-					<div class="col-md-3 col-lg-3 main-menu hidden-xs" id="main-menu">
+					<div class="hidden-xs col-md-2 col-lg-1">
+						<a class="noti" style="float: left;" class="hidden-xs" href="/notifications">
+							<span style="float: right;" id="notifications-badge"></span>
+							<i style="font-size:30px; padding-top:5px; color:#6c757d; cursor:pointer;" class="far fa-bell"></i>
+						</a>
+					</div>
+					<div class="col-md-4 col-2 col-lg-3 col-xl-2 main-menu" id="main-menu">
 					</div>
 				</div>
 			</div>
@@ -56,7 +49,17 @@
 			var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 			function onSearch(button) {
-				window.location.href = "/search/" + button.previousElementSibling.value;
+				if(button.previousElementSibling.value == "" || button.previousElementSibling.value == ".")
+				{
+					alert("Vui lòng nhập một vài ký tự!");
+				}
+				else{
+					window.location.href = "/search/" + button.previousElementSibling.value;
+				}
+			}
+
+			function prepareToAddMember(){
+				$("#addMember").modal("show");
 			}
 
 			function createLikesSection(data) {
@@ -72,7 +75,7 @@
 				html += '<div class="we-video-info">';
 					html += '<ul class="row">';
 
-						html += '<li class="col-md-4">';
+						html += '<li class="col-4 col-md-4">';
 
 							var className = "";
 							if (isLiked) {
@@ -81,21 +84,21 @@
 								className = "none";
 							}
 
-							html += '<span class="' + className + '" onclick="toggleLikePost(this);" data-id="' + data._id + '">';
+							html += '<span class="' + className + '" onclick="toggleLikePost(this);" data-type="' + data.type + '" data-id="' + data._id + '">';
 								html += '<i class="far fa-thumbs-up" style="padding-right:5px;"></i>';
 								html += '<span>' + data.likers.length + '</span>';
 							html += '</span>';
 
 						html += '</li>';
 
-						html += '<li class="col-md-4">';
+						html += '<li class="col-4 col-md-4">';
 							html += '<span class="comment" title="Comments">';
 								html += '<i class="far fa-comment" style="padding-right:5px;"></i>';
 								html += '<span id="count-post-comments-' + data._id + '">' + data.comments.length + '</span>';
 							html += '</span>';
 						html += '</li>';
 
-						html += '<li class="col-md-4" style="margin-top: 4px; padding-right: 35px;">';
+						html += '<li class="col-4 col-md-4" style="margin-top: 4px; padding-right: 35px;">';
 							html += '<span style="float:right;" class="share" onclick="sharePost(this);" data-image="' + data.image + '" ; data-content="' + data.content + '" ; data-caption="' + data.caption + '"; data-id="' + data._id + '">';
 								html += '<i class="far fa-bookmark"></i>';
 							html += '</span>';
@@ -138,16 +141,13 @@
 				formData.append("caption", caption);
 				formData.append("content", content);
 				formData.append("image", image);
-				console.log(caption);
-				console.log(content);
-				console.log(image);
 				ajax.send(formData);
 				
 			}
 
 			function toggleLikePost(self) {
 				var _id = self.getAttribute("data-id");
-
+				var type = self.getAttribute("data-type");
 				var ajax = new XMLHttpRequest();
 				ajax.open("POST", "/toggleLikePost", true);
 
@@ -179,10 +179,12 @@
 				var formData = new FormData();
 				formData.append("accessToken", localStorage.getItem("accessToken"));
 				formData.append("_id", _id);
+				formData.append("type", type);
 				ajax.send(formData);
 			}
 
 			function createCommentsSection(data) {
+				console.log(data);
 				var html = "";
 					html+='<div class="col-md-12">';  
 						data.comments = data.comments.reverse();
@@ -197,7 +199,7 @@
 								// html += '<span>' + date + '</span>';
 								
 								html += '<span class="description col-lg-9">' + comment.comment + '</span>';     
-								html += '<a style="text-decoration: none;" class="col-lg-3 replycmt" href="javascript:void(0);" data-post-id="' + data._id + '" data-comment-id="' + comment._id + '" onclick="prepareToReply(this);" title="Reply">Reply</a>';
+								html += '<a style="text-decoration: none;" class="col-lg-3 replycmt" href="javascript:void(0);" data-type="' + data.type + '" data-post-id="' + data._id + '" data-comment-id="' + comment._id + '" onclick="prepareToReply(this);" title="Reply">Reply</a>';
 								// 
 								
 								html += '<ul>';
@@ -215,11 +217,11 @@
 						}
 						html += '<form method="post" onsubmit="return doPostComment(this);">';
 							html+='<div class="row">';
-								html+='<div class="comment col-md-10">';
+								html+='<div class="comment col-8 col-md-10">';
 									html += '<input type="hidden" name="_id" value="' + data._id + '">';
 									html+='<input type="text" name="comment" class="input-field" placeholder="Viết bình luận">';
 								html+='</div>';
-								html+='<div class="col-md-2">';
+								html+='<div class="col-2 col-md-2">';
 									html += '<button class="postcmt" type="submit">Post</button>';
 								html+='</div>';
 							html+='</div>';
@@ -229,7 +231,8 @@
 			}
 
 			function doPostComment(form) {
-
+				var type = document.getElementById('type').value;
+				// alert(type);
 				var ajax = new XMLHttpRequest();
 				ajax.open("POST", "/postComment", true);
 
@@ -254,6 +257,7 @@
 
 				var formData = new FormData(form);
 				formData.append("accessToken", localStorage.getItem("accessToken"));
+				formData.append("type", type);
 				ajax.send(formData);
 
 				return false;
@@ -295,6 +299,8 @@
 			function prepareToCreateNote(){
 				$("#createNote").modal("show");
 			}
+
+
 
 			function prepareToCreateTourDetail(){
 				$("#createTourDetail").modal("show");
@@ -409,9 +415,6 @@
 								if (typeof isMember !== "undefined" && isMember){
 									showisMember();
 								}
-								if (typeof isNotifications !== "undefined" && isNotifications){
-									showNotifications();
-								}
 								if (typeof isPostDetail !== "undefined" && isPostDetail){
 									showPostDetails();
 								}
@@ -436,6 +439,26 @@
 								if (typeof isAllShowTour !== "undefined" && isAllShowTour){
 									showAllTour();
 								}
+								if (typeof isgetallTour !== "undefined" && isgetallTour){
+									getallTour();
+								}
+								if (typeof isChatTour !== "undefined" && isChatTour){
+									getChatTour();
+								}
+								if (typeof isNotifications !== "undefined" && isNotifications){
+									showNotifications();
+									markNotificationsAsRead();
+								}else {
+									var notificationsCount = 0;
+									for (var a = 0; a < window.user.notifications.length; a++) {
+										if (!window.user.notifications[a].isRead) {
+											notificationsCount++;
+										}
+									}
+									if (notificationsCount > 0) {
+										document.getElementById("notifications-badge").innerHTML =  "" + notificationsCount + "";
+									}
+								}
 							}
 							else{
 								localStorage.removeItem("accessToken");
@@ -450,14 +473,17 @@
 				}
 				else{
 					showMainMenu();
+					if (typeof isCheckLogin !== "undefined" && isCheckLogin){
+						CheckLogin();
+					}
 				}
 			}
+
 			
 			function showMainMenu(){
 				var html ="";
 				if(localStorage.getItem("accessToken")){
-					html +='<a href="/notifications"><i style="font-size:30px; padding-left:50px; padding-top:5px; color:#6c757d; cursor:pointer;" class="far fa-bell"></i></a>';
-					html +='<div class="dropdown show" style="float: left;">';
+					html +='<div class="dropdown ava show" style="float: left;">';
 					html +='<span style="background-image: url(/public/img/dalat.jpeg)" class="avatar dropdown a-custom-header dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
 					html +='</span>';
 					html +='<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">';
@@ -467,21 +493,20 @@
 					html +='<a class="dropdown-item" onclick="return doLogout();" href="/logout">Đăng xuất</a>';
 					html +='</div>';
 					html +='</div>';
-					html +='<a style="float: right;" class="a-custom-header" href="/blog">';
+					html +='<a class="hidden-xs" style="float: right;" class="a-custom-header" href="/blog">';
 					html +='<button class="button button-custom">'
 					html +='Viết bài'
 					html +='</button>';
 					html +='</a>'
 				}
 				else{
-					html +='<a href="/notifications"><i style="font-size:30px; padding-left:50px; padding-top:5px; color:#6c757d; cursor:pointer;" class="far fa-bell"></i></a>';
 					html +='<a style="float: right;" class="a-custom-header" href="/login">';
 					html +='<button class="button button-custom">'
 					html +='Đăng nhập'
 					html +='</button>';
 					html +='</a>'
 				}
-				document.getElementById("main-menu").innerHTML =html;
+				document.getElementById("main-menu").innerHTML = html;
 			}
 			//	
 			function doLogout(){
