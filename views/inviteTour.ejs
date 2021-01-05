@@ -38,10 +38,27 @@
                                 html+= '<br>';
                                 html+= 'Ghi chú: ' + data.ghiChu;
                             html+='</small>'
-                            html+='<div class="col-md-12 row">'
-                                html += '<a style="margin-right: 20px; text-decoration: none;" class="friend" href="javascript:void(0);" data-id="' + user._id + '" tourId="' + data._id + '" onclick="doAcceptTour(this);" title="Accept">Accept</a>';
-                                html += '<a style="text-decoration: none;" class="friend" href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinTour(this);" title="Reject">Reject</a>';
-                            html+=' </div>'
+                            for(var a = 1; a < data.members.length; a++){
+                                var beta = data.members[a];
+                                console.log(beta);
+                                if(beta._id == window.user._id && beta.status == "Pending"){
+                                    html+='<div class="col-md-12 row">'
+                                        html += '<a style="margin-right: 20px; text-decoration: none;" class="friend" href="javascript:void(0);" data-id="' + user._id + '" tourId="' + data._id + '" onclick="doAcceptTour(this);" title="Accept">Accept</a>';
+                                        html += '<a style="text-decoration: none;" class="friend" href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinTour(this);" title="Reject">Reject</a>';
+                                    html+=' </div>'
+                                }
+                                else if(beta._id == window.user._id && beta.status == "Accepted"){
+                                    html+='<div class="col-md-12 row">'
+                                        html += '<a style="margin-right: 20px; text-decoration: none;" class="friend" href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinTour(this);" title="Out">Rời khỏi</a>';
+                                    html+=' </div>'
+                                }
+                                else{
+                                    html+='<div class="col-md-12 row">'
+                                        html+='<i title="Xin vào phượt cùng" class="far fa-paper-plane" href="javascript:void(0);" data-id="'+ data._id +'"onclick="toggleJoinTour(this);"> Xin vào</i>';
+                                    html+=' </div>'
+                                }
+                            }
+
                         html+=' </div>'
                     html+=' </div>'
                 html+='</a>'

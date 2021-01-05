@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="/public/css/profile.css">
 <link rel="stylesheet" href="/public/css/tour.css">
+<link rel="stylesheet" href="/public/css/blog.css">
 <script src="/public/js/socket.io.js"></script>
 <link rel="stylesheet" type="text/css" href="/public/css/inbox.css">
 <%- include ("includes/header") %>
@@ -271,6 +272,7 @@
         ajax.send(formData);
     }
     function showTourDetail(){
+        connectSocketTour();
         var tour = document.getElementById("tour-data").value;
         tour = JSON.parse(tour);
         // console.log(tour);
@@ -566,20 +568,19 @@
                 }
                 else{
                     for (var a =0;a< response.data.length;a++){
-                    var inbox = response.data[a];
-                    if (inbox.from == window.user._id) {
-                        html += '<li class="me">';
-                            html += '<div class="mess-item">' + inbox.name + ' : ' +  inbox.message + '</div>';
-                        html += '</li>';
-                    } else {
-                        html += '<li class="you">';
-                            html += '<div class="mess-item">' + inbox.name + ' : ' + inbox.message + '</div>';
-                        html += '</li>';
+                        var inbox = response.data[a];
+                        if (inbox.from == window.user._id) {
+                            html += '<li class="me">';
+                                html += '<div class="mess-item">' + inbox.name + ' : ' +  inbox.message + '</div>';
+                            html += '</li>';
+                        } else {
+                            html += '<li class="you">';
+                                html += '<div class="mess-item">' + inbox.name + ' : ' + inbox.message + '</div>';
+                            html += '</li>';
+                        }
                     }
                 }
-                }
                 document.getElementById("chatting-area").innerHTML = html;
-
                 var objDiv = document.getElementById("chatting-area");
                 objDiv.scrollTop = objDiv.scrollHeight;
             }
@@ -587,7 +588,7 @@
         var formData = new FormData();
         formData.append("accessToken", localStorage.getItem("accessToken"));
         formData.append("_id",_id);
-        ajax.send(formData);
+        ajax.send(formData);     
     }
 
     function doSendTourMessage(form) {
@@ -601,6 +602,7 @@
                 var response = JSON.parse(this.responseText);
 
                 if(response.status == "success") {
+                    alert(response.message);
                     var html = "";
 
                     html += '<li class="me">';
@@ -621,20 +623,24 @@
         ajax.send(formData);
         return false;
     }
-    function connectSocket() {
+    function connectSocketTour() {
+        var _id = document.getElementById('_id').value;
         var ajax = new XMLHttpRequest();
-        ajax.open("POST","/connectSocket", true);
+        ajax.open("POST","/connectSocketTour", true);
 
         ajax.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 var response = JSON.parse(this.responseText);
 
                 socketIO.on("messageTourReceived", function(messageObj){
-                    if (selectedFriend != null && messageObj.from == selectedFriend._id) {
+                    console.log(messageObj);
+                    console.log(messageObj.from);
+                    console.log(window.user._id);
+                    if (messageObj.from != window.user._id) {
                         var html = "";
 
                         html += '<li class="you">';
-                            html += '<div class="mess-item">'+ messageObj.message + '</div>';
+                            html += '<div class="mess-item">'+ messageObj.name + ' : ' + messageObj.message + '</div>';
                         html += '</li>';
 
                         document.getElementById("chatting-area").innerHTML += html;
@@ -647,6 +653,7 @@
         };
         var formData = new FormData();
         formData.append("accessToken", localStorage.getItem("accessToken"));
+        formData.append("_id", _id);
         ajax.send(formData);
     }
 </script>
@@ -672,6 +679,14 @@
                             <br>
                             <input type="text" name="diemBatDau" class="input-field pad" placeholder="Địa điểm bắt đầu">
                             <input type="text" name="diemKetThuc" class="input-field" placeholder="Địa điểm kết thúc">
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12 fileContainer">
+                                <i class="fa fa-image"></i>
+                                <input type="file" name="image" accept="image/*" onchange="previewPostImage(this);">
+                                <img class="col-md-6" id="post-img-preview" style="display: none; width: 50px;">
+                                <span>Thêm hình để mọi người dễ dàng tìm kiếm</span>
+                            </div>
                         </div>
                     </div>
                     <div class="tab form-group">
@@ -719,7 +734,7 @@
 			</div>
 		</div>
 	</div>
-</div>
+</div>>
 
 <div class="modal fade" id="createNote" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog">

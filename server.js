@@ -21,11 +21,14 @@ app.set("view engine", "ejs");
 var socketIO = require("socket.io")(http);
 var socketID = "";
 var users = [];
+var tours = [];
+var socket1;
 
 var mainURL = "http://localhost:3000";
 
 socketIO.on("connection", function (socket) {
 	socketID = socket.id;
+	socket1 = socket;
 });
 
 http.listen(3000, function () {
@@ -611,7 +614,8 @@ http.listen(3000, function () {
 									"notification":{
 										"_id": ObjectId(),
 										"type":"friend_request_accepted",
-										"content":me.name + " accepted your friend request.",
+										"isRead": false,
+										"content": me.name + " accepted your friend request.",
 										"profileImage": me.profileImage,
 										"createdAt": new Date().getTime()
 									}
@@ -1182,6 +1186,7 @@ http.listen(3000, function () {
 												"notifications":{
 													"_id":ObjectId(),
 													"type":"group_join_request",
+													"isRead": false,
 													"content":user.name +"sent a request to join your group.",
 													"profileImage": user.profileImage,
 													"groupId": group._id,
@@ -1893,9 +1898,10 @@ http.listen(3000, function () {
 												"notifications":{
 													"_id":ObjectId(),
 													"type":"tour_join_request",
-													"content":user.name +"sent a request to join your tour.",
+													"content":user.name +" sent a request to join your tour.",
 													"profileImage": user.profileImage,
 													"tourId": tour._id,
+													"isRead": false,
 													"userId":user._id,
 													"status":"Pending",
 													"createAt": new Date().getTime()
@@ -2410,6 +2416,7 @@ http.listen(3000, function () {
 												"type":"add_friends_request",
 												"content":me.name +"send friend request ",
 												"profileImage": me.profileImage,
+												"isRead": false,
 												"status":"Pending",
 												"createAt": new Date().getTime()
 											}
@@ -2606,6 +2613,7 @@ http.listen(3000, function () {
 														},
 														"notifications":{
 															"_id":ObjectId(),
+															"isRead": false,
 															"type":"tour_invite_join",
 															"content":me.name +"invite you to join "+tour.tenChuyenDi+"tour.",
 															"profileImage": me.profileImage,
@@ -2693,6 +2701,7 @@ http.listen(3000, function () {
 											"notifications":{
 												"_id":ObjectId(),
 												"type":"notifications",
+												"isRead": false,
 												"content":user.name +" accepted request to join your tour.",
 												"profileImage": user.profileImage,
 												"tourId": tour._id,
@@ -2752,30 +2761,65 @@ http.listen(3000, function () {
 						"status":"error",
 						"message": "User has been logged out. Please login again."
 					});
-				} else {				
-					database.collection("tours").updateOne({
+				} else {
+					database.collection("tours").findOne({
 						"_id":ObjectId(_id)
-					},{
-						$push: {
-							"inbox":{
-								"_id": ObjectId(),
-								"message": message,
-								"from": user._id,
-								"name": user.name
+					},function(error,tour){
+						database.collection("tours").updateOne({
+							"_id":ObjectId(_id)
+						},{
+							$push: {
+								"inbox":{
+									"_id": ObjectId(),
+									"message": message,
+									"from": user._id,
+									"name": user.name
+								}
 							}
-						}
-					}, function (error, data){
-						socketIO.broadcast.emit("messageTourReceived",{
-							"message":message,
-							"from": user._id
-						});
-						result.json({
-							"status":"success",
-							"message":"Message has been sent"
-						});
-					});						
+						}, function (error, data){				
+							// socketIO.sockets.in(tour[tour._id]).emit("messageTourReceived",{
+							// 	"message":message,
+							// 	"from": user._id
+							// });
+							users[user._id].broadcast.emit("messageTourReceived",{
+								"message":message,
+								"from": user._id,
+								"name": user.name,
+								"tour": tour._id
+							});
+							result.json({
+								"status":"success",
+								"message":"Message has been sent"
+							});
+						});		
+					});										
 				}
 			});
 		});			
+		app.post("/connectSocketTour", function (request,result){
+			var accessToken = request.fields.accessToken;
+			var _id = request.fields._id;
+			database.collection("users").findOne({
+				"accessToken":accessToken
+			}, function(error,user){
+				if (user == null) {
+					result.json({
+						"status":"error",
+						"message":"User has been logged out. Please login again."
+					});
+				}else {
+					database.collection("tours").findOne({
+						"_id":ObjectId(_id)
+					},function(error,tour){
+						tours[tour._id] = socketID;
+						users[user._id] = socket1;
+						result.json({
+							"status":"status",
+							"message":"Socket has been connected."
+						});
+					});	
+				}				
+			});
+		});
 	});
 });
